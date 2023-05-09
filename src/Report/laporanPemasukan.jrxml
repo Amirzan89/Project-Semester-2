@@ -3,6 +3,9 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<subDataset name="dataset1" uuid="c1402549-6146-4073-be42-42995514dc9d"/>
+	<parameter name="tanggalAwal" class="java.lang.String"/>
+	<parameter name="tanggalAkhir" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT * FROM transaksi_jual]]>
 	</queryString>
@@ -31,13 +34,13 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="42" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="555" height="79" uuid="50487683-3404-4b8f-a64f-8c369149f404"/>
+				<reportElement x="0" y="0" width="555" height="42" uuid="50487683-3404-4b8f-a64f-8c369149f404"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="26"/>
+					<font size="24"/>
 				</textElement>
-				<text><![CDATA[Bonbon Sell]]></text>
+				<text><![CDATA[Laporan pemasukan]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -45,7 +48,21 @@
 		<band height="35" splitType="Stretch"/>
 	</pageHeader>
 	<columnHeader>
-		<band height="61" splitType="Stretch"/>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="41" width="20" height="20" uuid="8c64a244-dd1c-4b6b-8604-7906ff64d616"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="60" width="555" height="1" uuid="21b3930a-bbb7-40d5-b68e-91b878023703"/>
+				<graphicElement>
+					<pen lineWidth="1.5"/>
+				</graphicElement>
+			</line>
+		</band>
 	</columnHeader>
 	<detail>
 		<band height="125" splitType="Stretch"/>

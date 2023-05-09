@@ -763,8 +763,8 @@ public class TransaksiBeli extends javax.swing.JPanel {
                         pst.setString(1, this.saldoCreateID());
                         pst.setInt(2, text.toIntCase(this.txtSaldo.getText()));
                         pst.setString(3, "tambah transaksi beli");
-                        pst.setString(3, this.idTr);
-                        pst.setString(4, null);
+                        pst.setString(4, this.idTr);
+                        pst.setString(5, null);
                         if (pst.executeUpdate() > 0) {
                             System.out.println("Sudah membuat Saldo Baru");
                         }

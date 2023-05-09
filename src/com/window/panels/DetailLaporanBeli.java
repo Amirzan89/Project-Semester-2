@@ -1,196 +1,128 @@
 package com.window.panels;
 
+//import Report.cetak;
 import com.window.MainWindow;
-import com.data.db.Database;
-import com.data.db.DatabaseTables;
+import com.manage.ManageTransaksiBeli;
 import com.manage.Message;
 import com.manage.Text;
-import com.media.Audio;
 import com.media.Gambar;
 import com.sun.glass.events.KeyEvent;
-import com.manage.Diskon;
-import com.manage.Waktu;
-import com.window.dialogs.InputBarang;
-import com.window.dialogs.InputDiskon;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.sql.SQLException;
-import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
  * @author Amirzan Fikri P
  */
-public class DataDiskon extends javax.swing.JPanel {
+public class DetailLaporanBeli extends javax.swing.JPanel {
 
-    private final Waktu waktu = new Waktu();
-    private final Database db = new Database();
-    private final Diskon diskon = new Diskon();
-    private int tahun, bulan;
+    private final ManageTransaksiBeli trb = new ManageTransaksiBeli();
     private final Text text = new Text();
-    private final DateFormat date = new SimpleDateFormat("dd-MM-yyyy");
-    private final DateFormat date1 = new SimpleDateFormat("yyyy-MM-dd");
-    private final DateFormat tanggalMilis = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    private String idSelected = "", keyword = "", namaDiskon, jumlahDiskon, minimalPembelian, tanggalAwal, tanggalAkhir;
-    private Object[][] obj;
 
-    public DataDiskon() {
+    DateFormat tanggalMilis = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private final DateFormat tanggalFull = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ");
+    private final DateFormat date = new SimpleDateFormat("dd-MM-yyyy");
+    private final DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
+    private final DateFormat time = new SimpleDateFormat("hh:mm:ss");
+    private final DateFormat timeMillis = new SimpleDateFormat("ss.SSS:mm:hh");
+    private String idTrSelected = "", idSelected = "", keyword = "", idTr, idPd, IDSupplier, namaSupplier, IDBarang, namaBarang, jenisBarang, jumlahBarang;
+    private int selectedIndex, totalHrg, harga;
+
+    public DetailLaporanBeli(String idtr) throws ParseException {
         initComponents();
-        db.startConnection();
         this.btnKembali.setUI(new javax.swing.plaf.basic.BasicButtonUI());
-        this.btnAdd.setUI(new javax.swing.plaf.basic.BasicButtonUI());
-        this.btnEdit.setUI(new javax.swing.plaf.basic.BasicButtonUI());
-        this.btnDel.setUI(new javax.swing.plaf.basic.BasicButtonUI());
+        this.btnPrint.setUI(new javax.swing.plaf.basic.BasicButtonUI());
 
         this.tabelData.setRowHeight(29);
         this.tabelData.getTableHeader().setBackground(new java.awt.Color(255, 255, 255));
         this.tabelData.getTableHeader().setForeground(new java.awt.Color(0, 0, 0));
-        JLabel[] values = {
-            this.valIDDiskon, this.valNamaDiskon, this.valJmlDiskon, this.valMinimal,
-            this.valTanggalAwal, this.valTanggalAkhir
-        };
-
-        for (JLabel lbl : values) {
-            lbl.addMouseListener(new java.awt.event.MouseListener() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    lbl.setForeground(new Color(15, 98, 230));
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    lbl.setForeground(new Color(0, 0, 0));
-                }
-            });
-        }
-
+        this.idTrSelected = idtr;
+        keyword = "WHERE id_tr_beli = '" + this.idTrSelected + "'";
         this.updateTabel();
+        valTotal.setText(text.toMoneyCase(Integer.toString(getTotal("detail_transaksi_beli", "total_harga", "WHERE id_tr_beli = '" + this.idTrSelected + "'"))));
     }
 
-    public void closeKoneksi() {
-        diskon.closeConnection();
-        db.closeConnection();
+    private void closeKoneksi() {
+        trb.closeConnection();
     }
 
-    private void showData() {
+    private int getTotal(String table, String kolom, String kondisi) {
         try {
-            String tanggal1, tanggal2;
-            int baris = -1, hariAwal = 0, bulanAwal = 0, tahunAwal = 0, hariAkhir = 0, bulanAkhir = 0, tahunAkhir = 0;
-            for (int i = 0; i < obj.length; i++) {
-                if (this.obj[i][0].equals(this.idSelected)) {
-                    baris = i;
-                }
+            int data = 0;
+            String sql = "SELECT SUM(" + kolom + ") AS total FROM " + table + " " + kondisi;
+//            System.out.println(sql);
+            trb.res = trb.stat.executeQuery(sql);
+            while (trb.res.next()) {
+                data = trb.res.getInt("total");
             }
-            // mendapatkan data
-            this.namaDiskon = text.toCapitalize(diskon.getNamaDiskon(this.idSelected));
-            this.jumlahDiskon = text.toMoneyCase(diskon.getJumlah(this.idSelected));
-            this.minimalPembelian = text.toMoneyCase(diskon.getMinimal(this.idSelected));
-            this.tanggalAwal = text.toCapitalize(diskon.getTanggalAwal(this.idSelected));
-            this.tanggalAkhir = text.toCapitalize(diskon.getTanggalAkhir(this.idSelected));
-            Date a = date1.parse(this.tanggalAwal);
-            Date b = date1.parse(this.tanggalAkhir);
-            tanggal1 = date.format(a);
-            tanggal2 = date.format(b);
-            //mendapatkan hari dari variabel tanggal
-            hariAwal = Integer.parseInt(tanggal1.substring(0, 2));
-            hariAkhir = Integer.parseInt(tanggal2.substring(0, 2));
-            //mendapatkan bulan dari variabel tanggal
-            bulanAwal = Integer.parseInt(tanggal1.substring(3, 5));
-            bulanAkhir = Integer.parseInt(tanggal2.substring(3, 5));
-            //mendapatkan tahun dari variabel tanggal
-            tahunAwal = Integer.parseInt(tanggal1.substring(6));
-            tahunAkhir = Integer.parseInt(tanggal2.substring(6));
-
-            // menampilkan data
-            this.valIDDiskon.setText("<html><p>:&nbsp;" + idSelected + "</p></html>");
-            this.valNamaDiskon.setText("<html><p>:&nbsp;" + namaDiskon + "</p></html>");
-            this.valJmlDiskon.setText("<html><p>:&nbsp;" + jumlahDiskon + "</p></html>");
-            this.valMinimal.setText("<html><p>:&nbsp;" + minimalPembelian + "</p></html>");
-            this.valTanggalAwal.setText("<html><p>:&nbsp;" + hariAwal + "-" + this.waktu.getNamaBulan(bulanAwal - 1) + "-" + tahunAwal + "</p></html>");
-            this.valTanggalAkhir.setText("<html><p>:&nbsp;" + hariAkhir + "-" + this.waktu.getNamaBulan(bulanAkhir - 1) + "-" + tahunAkhir + "</p></html>");
-        } catch (ParseException ex) {
-            Logger.getLogger(DataDiskon.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void resetData() {
-        this.valIDDiskon.setText("<html><p>:&nbsp;</p></html>");
-        this.valNamaDiskon.setText("<html><p>:&nbsp;</p></html>");
-        this.valJmlDiskon.setText("<html><p>:&nbsp;</p></html>");
-        this.valMinimal.setText("<html><p>:&nbsp;</p></html>");
-        this.valTanggalAwal.setText("<html><p>:&nbsp;</p></html>");
-        this.valTanggalAkhir.setText("<html><p>:&nbsp;</p></html>");
-    }
-
-    private Object[][] getData() {
-        try {
-            String tanggalAwal, tanggalAkhir;
-//            Object obj[][];
-            int rows = 0;
-            String sql = "SELECT id_diskon, nama_diskon, jumlah_diskon, minimal_harga, tanggal_awal, tanggal_akhir FROM diskon " + keyword;
-            // mendefinisikan object berdasarkan total rows dan cols yang ada didalam tabel
-            this.obj = new Object[diskon.getJumlahData("diskon", keyword)][6];
-            // mengeksekusi query
-            diskon.res = diskon.stat.executeQuery(sql);
-            // mendapatkan semua data yang ada didalam tabel
-            while (diskon.res.next()) {
-                // menyimpan data dari tabel ke object
-                this.obj[rows][0] = diskon.res.getString("id_diskon");
-                this.obj[rows][1] = diskon.res.getString("nama_diskon");
-                this.obj[rows][2] = text.toMoneyCase(diskon.res.getString("jumlah_diskon"));
-                this.obj[rows][3] = text.toMoneyCase(diskon.res.getString("minimal_harga"));
-//                this.obj[rows][4] = diskon.res.getString("tanggal_awal");
-//                this.obj[rows][5] = diskon.res.getString("tanggal_akhir");
-                this.obj[rows][4] = date.format(date1.parse(diskon.res.getString("tanggal_awal")));
-                this.obj[rows][5] = date.format(date1.parse(diskon.res.getString("tanggal_akhir")));
-                rows++; // rows akan bertambah 1 setiap selesai membaca 1 row pada tabel
-            }
-            return this.obj;
+            return data;
         } catch (SQLException ex) {
+            Logger.getLogger(DetailLaporanJual.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NullPointerException n) {
+//            n.printStackTrace();
+            System.out.println("errorr ");
+            return 0;
+        }
+        return -1;
+    }
+
+    private Object[][] getData() throws ParseException {
+        try {
+            Object[][] obj;
+            int rows = 0;
+            String sql = "SELECT id_tr_beli, id_supplier, nama_supplier, id_barang, nama_barang, jenis_barang, harga_beli, jumlah, total_harga FROM detail_transaksi_beli " + keyword + " ORDER BY jenis_barang";
+//            System.out.println(sql);
+            obj = new Object[trb.getJumlahData("detail_transaksi_beli", keyword)][10];
+            // mengeksekusi query
+            trb.res = trb.stat.executeQuery(sql);
+            // mendapatkan semua data yang ada didalam this.tabelData
+            while (trb.res.next()) {
+                // menyimpan data dari this.tabelData ke object
+                obj[rows][0] = trb.res.getString("id_tr_beli").replace("TRB", "LPG");
+                obj[rows][1] = trb.res.getString("id_tr_beli");
+                obj[rows][2] = trb.res.getString("id_supplier");
+                obj[rows][3] = trb.res.getString("nama_supplier");
+                obj[rows][4] = trb.res.getString("id_barang");
+                obj[rows][5] = trb.res.getString("nama_barang");
+                obj[rows][6] = trb.res.getString("jenis_barang");
+                obj[rows][7] = text.toMoneyCase(Integer.toString(trb.res.getInt("harga_beli")));
+                obj[rows][8] = Integer.toString(trb.res.getInt("jumlah"));
+                obj[rows][9] = text.toMoneyCase(Integer.toString(trb.res.getInt("total_harga")));
+                rows++;
+            }
+            return obj;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             Message.showException(this, "Terjadi kesalahan saat mengambil data dari database\n" + ex.getMessage(), ex, true);
-        } catch (ParseException ex) {
-            Logger.getLogger(DataDiskon.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-    private void updateTabel() {
+    private void updateTabel() throws ParseException {
         this.tabelData.setModel(new javax.swing.table.DefaultTableModel(
                 getData(),
                 new String[]{
-                    "ID Diskon", "Nama Diskon", "Jumlah Diskon", "Minimal Pembelian", "Tanggal Awal", "Tanggal Akhir"
+                    "ID Pengeluaran", "ID Transaksi Beli", "ID Supplier", "Nama Supplier", "ID Barang", "Nama Barang", "Jenis Brang", "Harga Beli", "Jumlah", "Total Harga"
                 }
         ) {
             boolean[] canEdit = new boolean[]{
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             @Override
@@ -200,100 +132,66 @@ public class DataDiskon extends javax.swing.JPanel {
         });
     }
 
+    private void showData(int index) throws ParseException {
+        // mendapatkan data-data
+        this.idPd = this.tabelData.getValueAt(index, 0).toString();
+        this.idTr = this.tabelData.getValueAt(index, 1).toString();
+        this.IDSupplier = this.tabelData.getValueAt(index, 2).toString();
+        this.namaSupplier = this.tabelData.getValueAt(index, 3).toString();
+        this.IDBarang = this.tabelData.getValueAt(index, 4).toString();
+        this.namaBarang = this.tabelData.getValueAt(index, 5).toString();
+        this.jenisBarang = this.tabelData.getValueAt(index, 6).toString();
+        this.harga = text.toIntCase(this.tabelData.getValueAt(index, 7).toString());
+        this.jumlahBarang = this.tabelData.getValueAt(index, 8).toString();
+        this.totalHrg = text.toIntCase(this.tabelData.getValueAt(index, 9).toString());
+
+        // menampilkan data-data
+        this.valIDPengeluaran.setText("<html><p>:&nbsp;" + this.idPd + "</p></html>");
+        this.valIDTransaksi.setText("<html><p>:&nbsp;" + this.idTr + "</p></html>");
+        this.valIDSupplier.setText("<html><p>:&nbsp;" + this.IDSupplier + "</p></html>");
+        this.valNamaSupplier.setText("<html><p>:&nbsp;" + this.namaSupplier + "</p></html>");
+        this.valIDBarang.setText("<html><p>:&nbsp;" + this.IDBarang + "</p></html>");
+        this.valNamaBarang.setText("<html><p>:&nbsp;" + this.namaBarang + "</p></html>");
+        this.valHarga.setText("<html><p>:&nbsp;" + this.harga + "</p></html>");
+        this.valJenis.setText("<html><p>:&nbsp;" + this.jenisBarang + "</p></html>");
+        this.valTotalHarga.setText("<html><p>:&nbsp;" + this.totalHrg + "</p></html>");
+        this.valJumlah.setText("<html><p>:&nbsp;" + this.jumlahBarang + "</p></html>");
+    }
+
+    private void cetakNota(Map parameter) {
+        try {
+            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\notaPembelian.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+            JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameter, trb.conn);
+            JasperViewer.viewReport(jPrint);
+        } catch (JRException ex) {
+//            Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tabelData = new javax.swing.JTable();
-        valIDDiskon = new javax.swing.JLabel();
-        valNamaDiskon = new javax.swing.JLabel();
-        valJmlDiskon = new javax.swing.JLabel();
-        valMinimal = new javax.swing.JLabel();
-        valTanggalAwal = new javax.swing.JLabel();
-        valTanggalAkhir = new javax.swing.JLabel();
-        inpCari = new javax.swing.JTextField();
         btnKembali = new javax.swing.JButton();
-        btnAdd = new javax.swing.JButton();
-        btnEdit = new javax.swing.JToggleButton();
-        btnDel = new javax.swing.JToggleButton();
+        btnPrint = new javax.swing.JButton();
+        valIDPengeluaran = new javax.swing.JLabel();
+        valIDTransaksi = new javax.swing.JLabel();
+        valNamaSupplier = new javax.swing.JLabel();
+        valIDSupplier = new javax.swing.JLabel();
+        valNamaBarang = new javax.swing.JLabel();
+        valIDBarang = new javax.swing.JLabel();
+        valHarga = new javax.swing.JLabel();
+        valJenis = new javax.swing.JLabel();
+        valTotalHarga = new javax.swing.JLabel();
+        valJumlah = new javax.swing.JLabel();
+        valTotal = new javax.swing.JLabel();
+        inpCari = new javax.swing.JTextField();
+        lpSemua = new javax.swing.JScrollPane();
+        tabelData = new javax.swing.JTable();
         background = new javax.swing.JLabel();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        tabelData.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
-        tabelData.setForeground(new java.awt.Color(0, 0, 0));
-        tabelData.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID Diskon", "Nama Diskon", "Jumlah Diskon", "Minimal Diskon", "Tanggal Awal", "Tanggal Akhir"
-            }
-        ));
-        tabelData.setGridColor(new java.awt.Color(0, 0, 0));
-        tabelData.setSelectionBackground(new java.awt.Color(26, 164, 250));
-        tabelData.setSelectionForeground(new java.awt.Color(250, 246, 246));
-        tabelData.getTableHeader().setReorderingAllowed(false);
-        tabelData.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelDataMouseClicked(evt);
-            }
-        });
-        tabelData.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                tabelDatatablDataKeyPressed(evt);
-            }
-        });
-        jScrollPane2.setViewportView(tabelData);
-
-        add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 100, 580, 505));
-
-        valIDDiskon.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        valIDDiskon.setForeground(new java.awt.Color(0, 0, 0));
-        valIDDiskon.setText(":");
-        add(valIDDiskon, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 87, 240, 32));
-
-        valNamaDiskon.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        valNamaDiskon.setForeground(new java.awt.Color(0, 0, 0));
-        valNamaDiskon.setText(":");
-        add(valNamaDiskon, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 144, 240, 34));
-
-        valJmlDiskon.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        valJmlDiskon.setForeground(new java.awt.Color(0, 0, 0));
-        valJmlDiskon.setText(":");
-        add(valJmlDiskon, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 204, 240, 33));
-
-        valMinimal.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        valMinimal.setForeground(new java.awt.Color(0, 0, 0));
-        valMinimal.setText(":");
-        add(valMinimal, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 262, 240, 33));
-
-        valTanggalAwal.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        valTanggalAwal.setForeground(new java.awt.Color(0, 0, 0));
-        valTanggalAwal.setText(":");
-        add(valTanggalAwal, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 320, 240, 33));
-
-        valTanggalAkhir.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        valTanggalAkhir.setForeground(new java.awt.Color(0, 0, 0));
-        valTanggalAkhir.setText(":");
-        add(valTanggalAkhir, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 379, 240, 33));
-
-        inpCari.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
-        inpCari.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inpCariActionPerformed(evt);
-            }
-        });
-        inpCari.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                inpCariKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                inpCariKeyTyped(evt);
-            }
-        });
-        add(inpCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 68, 190, 32));
 
         btnKembali.setBackground(new java.awt.Color(220, 41, 41));
         btnKembali.setForeground(new java.awt.Color(255, 255, 255));
@@ -316,219 +214,144 @@ public class DataDiskon extends javax.swing.JPanel {
                 btnKembaliActionPerformed(evt);
             }
         });
-        add(btnKembali, new org.netbeans.lib.awtextra.AbsoluteConstraints(63, 630, 151, 50));
+        add(btnKembali, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 640, 154, 50));
 
-        btnAdd.setBackground(new java.awt.Color(41, 180, 50));
-        btnAdd.setForeground(new java.awt.Color(255, 255, 255));
-        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/image/gambar_icon/btn-tambah-075.png"))); // NOI18N
-        btnAdd.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        btnAdd.setOpaque(false);
-        btnAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnPrint.setBackground(new java.awt.Color(220, 41, 41));
+        btnPrint.setForeground(new java.awt.Color(255, 255, 255));
+        btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/image/gambar_icon/btn-print-075.png"))); // NOI18N
+        btnPrint.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnPrint.setMaximumSize(new java.awt.Dimension(130, 28));
+        btnPrint.setMinimumSize(new java.awt.Dimension(130, 28));
+        btnPrint.setOpaque(false);
+        btnPrint.setPreferredSize(new java.awt.Dimension(130, 28));
+        btnPrint.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnAddMouseEntered(evt);
+                btnPrintMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnAddMouseExited(evt);
+                btnPrintMouseExited(evt);
             }
         });
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
+                btnPrintActionPerformed(evt);
             }
         });
-        add(btnAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 630, 151, 50));
+        add(btnPrint, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 640, 154, 50));
 
-        btnEdit.setBackground(new java.awt.Color(34, 119, 237));
-        btnEdit.setForeground(new java.awt.Color(255, 255, 255));
-        btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/image/gambar_icon/btn-edit-075.png"))); // NOI18N
-        btnEdit.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        btnEdit.setMaximumSize(new java.awt.Dimension(109, 25));
-        btnEdit.setMinimumSize(new java.awt.Dimension(109, 25));
-        btnEdit.setOpaque(false);
-        btnEdit.setPreferredSize(new java.awt.Dimension(109, 25));
-        btnEdit.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnEditMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnEditMouseExited(evt);
-            }
-        });
-        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+        valIDPengeluaran.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        valIDPengeluaran.setForeground(new java.awt.Color(0, 0, 0));
+        valIDPengeluaran.setText(":");
+        add(valIDPengeluaran, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 70, 410, 27));
+
+        valIDTransaksi.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        valIDTransaksi.setForeground(new java.awt.Color(0, 0, 0));
+        valIDTransaksi.setText(": ");
+        add(valIDTransaksi, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 70, 320, 27));
+
+        valNamaSupplier.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        valNamaSupplier.setForeground(new java.awt.Color(0, 0, 0));
+        valNamaSupplier.setText(":");
+        add(valNamaSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 107, 410, 27));
+
+        valIDSupplier.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        valIDSupplier.setForeground(new java.awt.Color(0, 0, 0));
+        valIDSupplier.setText(":");
+        add(valIDSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 107, 320, 27));
+
+        valNamaBarang.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        valNamaBarang.setForeground(new java.awt.Color(0, 0, 0));
+        valNamaBarang.setText(":");
+        add(valNamaBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 142, 410, 27));
+
+        valIDBarang.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        valIDBarang.setForeground(new java.awt.Color(0, 0, 0));
+        valIDBarang.setText(":");
+        add(valIDBarang, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 142, 320, 27));
+
+        valHarga.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        valHarga.setForeground(new java.awt.Color(0, 0, 0));
+        valHarga.setText(":");
+        add(valHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 178, 410, 27));
+
+        valJenis.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        valJenis.setForeground(new java.awt.Color(0, 0, 0));
+        valJenis.setText(": ");
+        add(valJenis, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 179, 320, 27));
+
+        valTotalHarga.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        valTotalHarga.setForeground(new java.awt.Color(0, 0, 0));
+        valTotalHarga.setText(":");
+        add(valTotalHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 215, 410, 27));
+
+        valJumlah.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        valJumlah.setForeground(new java.awt.Color(0, 0, 0));
+        valJumlah.setText(": ");
+        valJumlah.setName(""); // NOI18N
+        add(valJumlah, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 215, 320, 27));
+
+        valTotal.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        valTotal.setForeground(new java.awt.Color(0, 0, 0));
+        valTotal.setText(":");
+        add(valTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 585, 280, 25));
+
+        inpCari.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        inpCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
+                inpCariActionPerformed(evt);
             }
         });
-        add(btnEdit, new org.netbeans.lib.awtextra.AbsoluteConstraints(453, 630, 151, 50));
+        inpCari.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inpCariKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                inpCariKeyTyped(evt);
+            }
+        });
+        add(inpCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 275, 315, 32));
 
-        btnDel.setBackground(new java.awt.Color(220, 41, 41));
-        btnDel.setForeground(new java.awt.Color(255, 255, 255));
-        btnDel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/image/gambar_icon/btn-hapus-075.png"))); // NOI18N
-        btnDel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        btnDel.setOpaque(false);
-        btnDel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnDelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnDelMouseExited(evt);
-            }
-        });
-        btnDel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDelActionPerformed(evt);
-            }
-        });
-        add(btnDel, new org.netbeans.lib.awtextra.AbsoluteConstraints(646, 630, 151, 50));
+        tabelData.setBackground(new java.awt.Color(255, 255, 255));
+        tabelData.setFont(new java.awt.Font("Ebrima", 1, 14)); // NOI18N
+        tabelData.setForeground(new java.awt.Color(0, 0, 0));
+        tabelData.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
 
-        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/image/gambar/app-dataDiskon.png"))); // NOI18N
+            },
+            new String [] {
+                "ID Pengeluaran", "ID Transaksi Beli", "ID Supplier", "Nama Supplier", "ID Barang", "Nama Barang", "Jenis Barang", "Harga Beli", "Jumlah", "Total Harga"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tabelData.setGridColor(new java.awt.Color(0, 0, 0));
+        tabelData.setSelectionBackground(new java.awt.Color(26, 164, 250));
+        tabelData.setSelectionForeground(new java.awt.Color(250, 246, 246));
+        tabelData.getTableHeader().setReorderingAllowed(false);
+        tabelData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabelDataMouseClicked(evt);
+            }
+        });
+        tabelData.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tabelDataKeyPressed(evt);
+            }
+        });
+        lpSemua.setViewportView(tabelData);
+
+        add(lpSemua, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 305, 1130, 275));
+
+        background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/image/gambar/app-detail-laporan-pengeluaran.png"))); // NOI18N
         background.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
-
-    private void tabelDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDataMouseClicked
-        this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        // menampilkan data diskon
-        this.idSelected = this.tabelData.getValueAt(tabelData.getSelectedRow(), 0).toString();
-        this.showData();
-        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_tabelDataMouseClicked
-
-    private void tabelDatatablDataKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabelDatatablDataKeyPressed
-        this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        if (evt.getKeyCode() == KeyEvent.VK_UP) {
-            if (this.tabelData.getSelectedRow() >= 1) {
-                this.idSelected = this.tabelData.getValueAt(tabelData.getSelectedRow() - 1, 0).toString();
-                this.showData();
-            }
-        }
-        if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            if (this.tabelData.getSelectedRow() < (this.tabelData.getRowCount() - 1)) {
-                this.idSelected = this.tabelData.getValueAt(tabelData.getSelectedRow() + 1, 0).toString();
-                this.showData();
-            }
-        }
-        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_tabelDatatablDataKeyPressed
-
-    private void inpCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inpCariActionPerformed
-        String key = this.inpCari.getText();
-        this.keyword = "WHERE id_diskon LIKE '%" + key + "%' OR nama_diskon LIKE '%" + key + "%'";
-        this.updateTabel();
-    }//GEN-LAST:event_inpCariActionPerformed
-
-    private void inpCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpCariKeyReleased
-        String key = this.inpCari.getText();
-        this.keyword = "WHERE id_diskon LIKE '%" + key + "%' OR nama_diskon LIKE '%" + key + "%'";
-        this.updateTabel();
-    }//GEN-LAST:event_inpCariKeyReleased
-
-    private void inpCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpCariKeyTyped
-        String key = this.inpCari.getText();
-        this.keyword = "WHERE id_diskon LIKE '%" + key + "%' OR nama_diskon LIKE '%" + key + "%'";
-        this.updateTabel();
-    }//GEN-LAST:event_inpCariKeyTyped
-
-    private void btnAddMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseEntered
-        this.btnAdd.setIcon(Gambar.getAktiveIcon(this.btnAdd.getIcon().toString()));
-    }//GEN-LAST:event_btnAddMouseEntered
-
-    private void btnAddMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddMouseExited
-        this.btnAdd.setIcon(Gambar.getBiasaIcon(this.btnAdd.getIcon().toString()));
-    }//GEN-LAST:event_btnAddMouseExited
-
-    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        try {
-            // membuka window input pembeli
-            Audio.play(Audio.SOUND_INFO);
-            InputDiskon tbh = new InputDiskon(null, true, null);
-            tbh.setVisible(true);
-            
-            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            // mengecek apakah diskon jadi menambahkan data atau tidak
-            if (tbh.isUpdated()) {
-                // mengupdate tabel
-                this.updateTabel();
-                this.tabelData.setRowSelectionInterval(this.tabelData.getRowCount() - 1, this.tabelData.getRowCount() - 1);
-            }
-            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        } catch (ParseException ex) {
-            Logger.getLogger(DataDiskon.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_btnAddActionPerformed
-
-    private void btnEditMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditMouseEntered
-        this.btnEdit.setIcon(Gambar.getAktiveIcon(this.btnEdit.getIcon().toString()));
-    }//GEN-LAST:event_btnEditMouseEntered
-
-    private void btnEditMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEditMouseExited
-        this.btnEdit.setIcon(Gambar.getBiasaIcon(this.btnEdit.getIcon().toString()));
-    }//GEN-LAST:event_btnEditMouseExited
-
-    private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // mengecek apakah ada data yang dipilih atau tidak
-        if (tabelData.getSelectedRow() > -1) {
-            try {
-                // membuka window input pembeli
-                Audio.play(Audio.SOUND_INFO);
-                InputDiskon tbh = new InputDiskon(null, true, this.idSelected);
-                tbh.setVisible(true);
-                
-                this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                // mengecek apakah diskon jadi mengedit data atau tidak
-                if (tbh.isUpdated()) {
-                    // mengupdate tabel dan menampilkan ulang data
-                    this.updateTabel();
-                    this.showData();
-                }
-                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            } catch (ParseException ex) {
-                Logger.getLogger(DataDiskon.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            Message.showWarning(this, "Tidak ada data yang dipilih!!", true);
-        }
-    }//GEN-LAST:event_btnEditActionPerformed
-
-    private void btnDelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDelMouseEntered
-        this.btnDel.setIcon(Gambar.getAktiveIcon(this.btnDel.getIcon().toString()));
-    }//GEN-LAST:event_btnDelMouseEntered
-
-    private void btnDelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDelMouseExited
-        this.btnDel.setIcon(Gambar.getBiasaIcon(this.btnDel.getIcon().toString()));
-    }//GEN-LAST:event_btnDelMouseExited
-
-    private void btnDelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelActionPerformed
-        int status;
-        boolean delete;
-        // mengecek apakah ada data yang dipilih atau tidak
-        if (tabelData.getSelectedRow() > -1) {
-            // membuka confirm dialog untuk menghapus data
-            Audio.play(Audio.SOUND_INFO);
-            status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus '" + this.namaDiskon + "' ?", "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
-            // mengecek pilihan dari diskon
-            switch (status) {
-                // jika yes maka data akan dihapus
-                case JOptionPane.YES_OPTION:
-                    // menghapus data pembeli
-                    this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    delete = this.diskon.deleteDiskon(this.idSelected);
-                    // mengecek apakah data pembeli berhasil terhapus atau tidak
-                    if (delete) {
-                        Message.showInformation(this, "Data berhasil dihapus!");
-                        // mengupdate tabel
-                        this.updateTabel();
-                        this.resetData();
-                    } else {
-                        Message.showInformation(this, "Data gagal dihapus!");
-                    }
-                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    break;
-            }
-        } else {
-            Message.showWarning(this, "Tidak ada data yang dipilih!!", true);
-        }
-    }//GEN-LAST:event_btnDelActionPerformed
 
     private void btnKembaliMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKembaliMouseEntered
         this.btnKembali.setIcon(Gambar.getAktiveIcon(this.btnKembali.getIcon().toString()));
@@ -537,45 +360,123 @@ public class DataDiskon extends javax.swing.JPanel {
     private void btnKembaliMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKembaliMouseExited
         this.btnKembali.setIcon(Gambar.getBiasaIcon(this.btnKembali.getIcon().toString()));
     }//GEN-LAST:event_btnKembaliMouseExited
-
-    private void dataBarang(JPanel pnl) {
-        System.out.println("data diskon");
-        //jika btn diskon di window barang di klik
+    private void dataLaporan(JPanel pnl) {
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-//        MainWindow.setTitle("Data Diskon");
+//        MainWindow.setTitle("Data");
         // menghapus panel lama
         MainWindow.pnlMenu.removeAll();
         MainWindow.pnlMenu.repaint();
         MainWindow.pnlMenu.revalidate();
-        System.out.println("data diskon3");
 //        pnlMenu.revalidate();
         this.closeKoneksi();
         // menambahkan panel baru
         MainWindow.pnlMenu.add(pnl);
         MainWindow.pnlMenu.validate();
-        System.out.println("data diskon5");
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
     private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliActionPerformed
-        DataBarang pnl = new DataBarang();
-        this.dataBarang(pnl);
+        try {
+//            barang.closeConnection();
+            LaporanBeli pnl = new LaporanBeli();
+            this.dataLaporan(pnl);
+        } catch (ParseException ex) {
+            Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnKembaliActionPerformed
 
+    private void inpCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inpCariActionPerformed
+        try {
+            String key = this.inpCari.getText();
+            this.keyword = "WHERE id_tr_beli = '" + this.idTrSelected + "' AND (id_barang LIKE '%" + key + "%' OR nama_barang LIKE '%" + key + "%')";
+            this.updateTabel();
+        } catch (ParseException ex) {
+            Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_inpCariActionPerformed
+
+    private void inpCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpCariKeyReleased
+        try {
+            String key = this.inpCari.getText();
+            this.keyword = "WHERE id_tr_beli = '" + this.idTrSelected + "' AND (id_barang LIKE '%" + key + "%' OR nama_barang LIKE '%" + key + "%')";
+
+            this.updateTabel();
+        } catch (ParseException ex) {
+            Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_inpCariKeyReleased
+
+    private void inpCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpCariKeyTyped
+        try {
+            String key = this.inpCari.getText();
+            this.keyword = "WHERE id_tr_beli = '" + this.idTrSelected + "' AND (id_barang LIKE '%" + key + "%' OR nama_barang LIKE '%" + key + "%')";
+            this.updateTabel();
+        } catch (ParseException ex) {
+            Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_inpCariKeyTyped
+
+    private void tabelDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelDataMouseClicked
+        try {
+            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            this.idSelected = this.tabelData.getValueAt(this.tabelData.getSelectedRow(), 0).toString();
+            this.showData(this.tabelData.getSelectedRow());
+            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        } catch (ParseException ex) {
+            Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tabelDataMouseClicked
+
+    private void tabelDataKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tabelDataKeyPressed
+        try {
+            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            if (evt.getKeyCode() == KeyEvent.VK_UP) {
+                if (this.tabelData.getSelectedRow() >= 1) {
+                    this.idSelected = this.tabelData.getValueAt(this.tabelData.getSelectedRow() - 1, 0).toString();
+                    this.showData(this.tabelData.getSelectedRow() - 1);
+                }
+            } else if (evt.getKeyCode() == KeyEvent.VK_DOWN) {
+                if (this.tabelData.getSelectedRow() < (this.tabelData.getRowCount() - 1)) {
+                    this.idSelected = this.tabelData.getValueAt(this.tabelData.getSelectedRow() + 1, 0).toString();
+                    this.showData(this.tabelData.getSelectedRow() + 1);
+                }
+            }
+            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        } catch (ParseException ex) {
+            Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tabelDataKeyPressed
+
+    private void btnPrintMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrintMouseEntered
+        this.btnPrint.setIcon(Gambar.getAktiveIcon(this.btnPrint.getIcon().toString()));
+    }//GEN-LAST:event_btnPrintMouseEntered
+
+    private void btnPrintMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrintMouseExited
+        this.btnPrint.setIcon(Gambar.getBiasaIcon(this.btnPrint.getIcon().toString()));
+    }//GEN-LAST:event_btnPrintMouseExited
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        Map parameters = new HashMap();
+        parameters.put("id_tr_beli", this.idTr);
+        this.cetakNota(parameters);
+    }//GEN-LAST:event_btnPrintActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel background;
-    private javax.swing.JButton btnAdd;
-    private javax.swing.JToggleButton btnDel;
-    private javax.swing.JToggleButton btnEdit;
     private javax.swing.JButton btnKembali;
+    private javax.swing.JButton btnPrint;
     private javax.swing.JTextField inpCari;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane lpSemua;
     private javax.swing.JTable tabelData;
-    private javax.swing.JLabel valIDDiskon;
-    private javax.swing.JLabel valJmlDiskon;
-    private javax.swing.JLabel valMinimal;
-    private javax.swing.JLabel valNamaDiskon;
-    private javax.swing.JLabel valTanggalAkhir;
-    private javax.swing.JLabel valTanggalAwal;
+    private javax.swing.JLabel valHarga;
+    private javax.swing.JLabel valIDBarang;
+    private javax.swing.JLabel valIDPengeluaran;
+    private javax.swing.JLabel valIDSupplier;
+    private javax.swing.JLabel valIDTransaksi;
+    private javax.swing.JLabel valJenis;
+    private javax.swing.JLabel valJumlah;
+    private javax.swing.JLabel valNamaBarang;
+    private javax.swing.JLabel valNamaSupplier;
+    private javax.swing.JLabel valTotal;
+    private javax.swing.JLabel valTotalHarga;
     // End of variables declaration//GEN-END:variables
 }

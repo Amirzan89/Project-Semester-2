@@ -1,16 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="notaPenjualan" language="groovy" pageWidth="136" pageHeight="842" columnWidth="136" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="96f949c0-0dfc-40b8-9ebe-69fa1f128f17">
-	<property name="ireport.zoom" value="1.7715610000000035"/>
+	<property name="ireport.zoom" value="3.7974983358324215"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="id_tr_jual" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="totalBarang" class="java.lang.Integer" isForPrompting="false"/>
-	<parameter name="totalHarga" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="bayar" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="diskon" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="kembalian" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="tanggal" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="totalSebelum" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT transaksi_jual.id_tr_jual, transaksi_jual.nama_karyawan, detail_transaksi_jual.nama_barang, detail_transaksi_jual.harga, detail_transaksi_jual.jumlah,
 detail_transaksi_jual.total_harga AS subtotal FROM transaksi_jual INNER JOIN detail_transaksi_jual
@@ -50,7 +43,7 @@ ON transaksi_jual.id_tr_jual = detail_transaksi_jual.id_tr_jual WHERE transaksi_
 	<pageHeader>
 		<band height="36" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="136" height="35" uuid="bf3b7426-7e00-405c-abaa-5bbf97daea26"/>
+				<reportElement x="0" y="0" width="136" height="23" uuid="bf3b7426-7e00-405c-abaa-5bbf97daea26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>
@@ -189,76 +182,13 @@ ON transaksi_jual.id_tr_jual = detail_transaksi_jual.id_tr_jual WHERE transaksi_
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="70" splitType="Stretch">
-			<staticText>
-				<reportElement x="1" y="10" width="42" height="10" uuid="074d7918-164b-44e8-a01d-375a5ad21046"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Total Barang   :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1" y="20" width="42" height="10" uuid="c471d4f4-3c76-4d6d-8c56-008b5e5eec38"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Jumlah           :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1" y="50" width="42" height="10" uuid="92d8b9d7-89df-4f86-aa8b-79c0156f296d"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Bayar              :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1" y="30" width="42" height="10" uuid="9e3db1d2-fc22-4e54-9e06-ba79ae555e3e"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Diskon            :]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="1" y="60" width="42" height="10" uuid="066a4047-c2d4-4e42-92ba-250ebabc5543"/>
-				<textElement verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Kembalian      :]]></text>
-			</staticText>
+		<band height="21" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="43" y="40" width="93" height="10" uuid="5c2b222f-618b-4487-adc4-b0865de9cb98"/>
+				<reportElement x="43" y="11" width="93" height="10" uuid="5c2b222f-618b-4487-adc4-b0865de9cb98"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="6" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{totalHarga}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="43" y="30" width="93" height="10" uuid="790ada56-e272-485b-8732-8a0a7fb7ff59"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{diskon}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="43" y="50" width="93" height="10" uuid="2fded627-2b7d-451a-b31b-7965cccacf30"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{bayar}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="43" y="60" width="93" height="10" uuid="571fd085-f6b4-4f80-97b6-4457957ea42b"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{kembalian}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement x="43" y="10" width="93" height="10" uuid="6f31c224-c7d2-489c-bb82-ffb3993f1ec7"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{totalBarang}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="10" width="136" height="1" uuid="68818c61-06ad-4214-bc11-53ab085d3871"/>
@@ -266,19 +196,12 @@ ON transaksi_jual.id_tr_jual = detail_transaksi_jual.id_tr_jual WHERE transaksi_
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isBlankWhenNull="true">
-				<reportElement x="43" y="20" width="93" height="10" uuid="ee072f31-914c-46a4-9b21-88b67ce05021"/>
-				<textElement textAlignment="Right">
-					<font size="6" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{totalSebelum}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="1" y="40" width="42" height="10" uuid="c5f02990-1133-431b-a70a-dea9f7729338"/>
+				<reportElement x="1" y="11" width="42" height="10" uuid="c5f02990-1133-431b-a70a-dea9f7729338"/>
 				<textElement verticalAlignment="Middle">
 					<font size="6" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Total Harga     :]]></text>
+				<text><![CDATA[Total Harga  :]]></text>
 			</staticText>
 		</band>
 	</summary>

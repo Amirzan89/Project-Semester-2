@@ -535,7 +535,6 @@ public class DataBarang extends javax.swing.JPanel {
     
     private void btnDiskonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiskonActionPerformed
             DataDiskon pnl = new DataDiskon();
-            
             this.dataDiskon(pnl);
     }//GEN-LAST:event_btnDiskonActionPerformed
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="notaPenjualan" language="groovy" pageWidth="136" pageHeight="842" columnWidth="136" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="96f949c0-0dfc-40b8-9ebe-69fa1f128f17">
-	<property name="ireport.zoom" value="1.7715610000000035"/>
+	<property name="ireport.zoom" value="3.7974983358324215"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="638"/>
 	<parameter name="id_tr_jual" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="totalBarang" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="totalHarga" class="java.lang.String" isForPrompting="false"/>
@@ -10,7 +10,7 @@
 	<parameter name="diskon" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="kembalian" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="tanggal" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="totalSebelum" class="java.lang.String"/>
+	<parameter name="totalSebelum" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT transaksi_jual.id_tr_jual, transaksi_jual.nama_karyawan, detail_transaksi_jual.nama_barang, detail_transaksi_jual.harga, detail_transaksi_jual.jumlah,
 detail_transaksi_jual.total_harga AS subtotal FROM transaksi_jual INNER JOIN detail_transaksi_jual
@@ -50,7 +50,7 @@ ON transaksi_jual.id_tr_jual = detail_transaksi_jual.id_tr_jual WHERE transaksi_
 	<pageHeader>
 		<band height="36" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="136" height="35" uuid="bf3b7426-7e00-405c-abaa-5bbf97daea26"/>
+				<reportElement x="0" y="0" width="136" height="23" uuid="bf3b7426-7e00-405c-abaa-5bbf97daea26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="6"/>
 				</textElement>

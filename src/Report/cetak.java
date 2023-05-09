@@ -103,10 +103,11 @@ public class cetak extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
-            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\notaPenjualan.jrxml");
+            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\strukPenjualan.jrxml");
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             Map parameters = new HashMap();
             parameters.put("id_tr_jual","TRJ0001");
+//            parameters.put("id_tr_beli","TRB0001");
             JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameters, db.conn);
             JasperViewer.viewReport(jPrint);
 //            JasperExportManager.exportReportToPdfFile(jPrint, "reports/simple_report.pdf");
