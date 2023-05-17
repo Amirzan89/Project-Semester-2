@@ -1868,6 +1868,7 @@ public class TransaksiJual extends javax.swing.JPanel implements DocumentListene
     private void inpJumlahKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpJumlahKeyReleased
         try {
             if (!inpJumlah.getText().isEmpty()) {
+//                this.sebelumJumlah = 
                 if (text.isNumber(inpJumlah.getText())) {
                     int jumlahbarang = Integer.parseInt(inpJumlah.getText());
                     if (jumlahbarang <= 0) {
@@ -1880,6 +1881,7 @@ public class TransaksiJual extends javax.swing.JPanel implements DocumentListene
                     }
                 } else {
 //                    System.out.println("harus angka");
+                    inpJumlah.getText();
                     Message.showWarning(this, "Jumlah Barang Harus Angka!");
                 }
             } else {

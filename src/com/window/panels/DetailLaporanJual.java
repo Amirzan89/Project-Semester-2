@@ -106,7 +106,11 @@ public class DetailLaporanJual extends javax.swing.JPanel {
                 // menyimpan data dari this.tabelData ke object
                 obj[rows][0] = trj.res.getString("id_tr_jual").replace("TRJ", "LPD");
                 obj[rows][1] = trj.res.getString("id_tr_jual");
-                obj[rows][2] = trj.res.getString("id_barang");
+                if(trj.res.getString("id_barang") == null){
+                    obj[rows][2] = "";
+                }else{
+                    obj[rows][2] = trj.res.getString("id_barang");
+                }
                 obj[rows][3] = trj.res.getString("nama_barang");
                 obj[rows][4] = trj.res.getString("jenis_barang");
                 obj[rows][5] = text.toMoneyCase(Integer.toString(trj.res.getInt("harga")));

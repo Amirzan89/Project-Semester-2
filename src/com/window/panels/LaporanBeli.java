@@ -1,7 +1,6 @@
 package com.window.panels;
 
 import com.data.db.Database;
-import com.manage.Barang;
 import com.manage.Chart;
 import com.manage.ManageTransaksiBeli;
 import com.manage.Message;
@@ -12,7 +11,6 @@ import com.media.Audio;
 import com.media.Gambar;
 import com.sun.glass.events.KeyEvent;
 import com.window.MainWindow;
-//import com.users.Karyawan;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -448,7 +446,7 @@ public class LaporanBeli extends javax.swing.JPanel {
 
     private void cetakNota(Map parameter) {
         try {
-            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\laporanPengeluaran.jrxml");
+            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\LaporanPengeluaran.jrxml");
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameter, trb.conn);
             JasperViewer.viewReport(jPrint);
@@ -1307,50 +1305,45 @@ public class LaporanBeli extends javax.swing.JPanel {
     }//GEN-LAST:event_tbMinggu2PropertyChange
 
     private void btnCetakMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCetakMouseClicked
-        try {
-            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            Map parameters = new HashMap();
-            switch (this.selectedIndex) {
-                case 1:
-                    tabelDataS.print();
+        this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        Map parameters = new HashMap();
+        switch (this.selectedIndex) {
+            case 1:
+                this.cetakNota(parameters);
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                break;
+            case 2:
+                if (tabelDataH.getRowCount() > 0) {
+                    parameters.put("tanggal", tbHarian.getDate());
                     this.cetakNota(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    break;
-                case 2:
-                    if (tabelDataH.getRowCount() > 0) {
-                        parameters.put("tanggal", tbHarian.getDate());
-                        this.cetakNota(parameters);
-                        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    } else {
-                        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                        Message.showWarning(this, "Tabel kosong !");
-                    }
-                    break;
-                case 3:
-                    if (tabelDataB.getRowCount() > 0) {
-                        parameters.put("bulan", tbBulanan.getMonth());
-                        parameters.put("tahun", tbTahunan.getYear());
-                        this.cetakNota(parameters);
-                        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    } else {
-                        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                        Message.showWarning(this, "Tabel kosong !");
-                    }
-                    break;
-                case 4:
-                    if (tabelDataM.getRowCount() > 0) {
-                        parameters.put("tanggalAwal", tbMinggu1.getDate());
-                        parameters.put("tanggalAkhir", tbMinggu2.getDate());
-                        this.cetakNota(parameters);
-                        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    } else {
-                        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                        Message.showWarning(this, "Tabel kosong !");
-                    }
-                    break;
-            }
-        } catch (PrinterException ex) {
-            Logger.getLogger(LaporanJual.class.getName()).log(Level.SEVERE, null, ex);
+                } else {
+                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    Message.showWarning(this, "Tabel kosong !");
+                }
+                break;
+            case 3:
+                if (tabelDataB.getRowCount() > 0) {
+                    parameters.put("bulan", tbBulanan.getMonth());
+                    parameters.put("tahun", tbTahunan.getYear());
+                    this.cetakNota(parameters);
+                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                } else {
+                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    Message.showWarning(this, "Tabel kosong !");
+                }
+                break;
+            case 4:
+                if (tabelDataM.getRowCount() > 0) {
+                    parameters.put("tanggalAwal", tbMinggu1.getDate());
+                    parameters.put("tanggalAkhir", tbMinggu2.getDate());
+                    this.cetakNota(parameters);
+                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                } else {
+                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    Message.showWarning(this, "Tabel kosong !");
+                }
+                break;
         }
     }//GEN-LAST:event_btnCetakMouseClicked
 

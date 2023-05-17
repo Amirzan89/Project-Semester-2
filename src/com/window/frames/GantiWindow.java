@@ -14,6 +14,7 @@ import com.window.frames.SplashWindow;
 import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -39,7 +40,71 @@ public class GantiWindow extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setIconImage(Gambar.getWindowIcon());
     }
+    private void login(){
+        try {
+            boolean kosong = false;
+            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            this.username = this.inpUsername.getText();
+            this.passwordLama = this.inpPasswordLama.getText();
+            this.passwordBaru = this.inpPasswordBaru.getText();
+            if (this.username.isEmpty()) {
+                kosong = true;
+                System.out.println("Username tidak boleh kosong");
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                Message.showWarning(this, "Username harus Di isi !");
+            } else if (this.passwordLama.isEmpty()) {
+                kosong = true;
+                System.out.println("Password Lama tidak boleh kosong");
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                Message.showWarning(this, "Password Lama harus Di isi !");
+            } else if (this.passwordBaru.isEmpty()) {
+                kosong = true;
+                System.out.println("Password Baru tidak boleh kosong");
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                Message.showWarning(this, "Password Baru harus Di isi !");
+            }
+            if (!kosong) {
+                JOptionPane.showMessageDialog(this, "Mohon tunggu sebentar\nSedang Memeriksa Username dan Password");
+                boolean check = user.validateSetPassword(this.username, this.passwordLama);
+                if (check) {
+                    boolean ganti = user.setPassword(this.username, this.passwordBaru);
+                    if (ganti) {
+                        JOptionPane.showMessageDialog(this, "Ganti Password berhasil \nSedang mengubah password !");
+                        boolean login = user.login(this.username, passwordBaru);
+                        if (login) {
+                            Audio.play(Audio.SOUND_INFO);
+                            JOptionPane.showMessageDialog(this, "Login Berhasil!\n\nSelamat datang " + user.getData(UserLevels.USERS.name(), "nama_karyawan", "WHERE id_karyawan = '" + user.getData(UserLevels.USERS.name(), "id_karyawan", "WHERE username = '" + this.username + "'") + "'"));
+                            // membuka window dashboard
+                            java.awt.EventQueue.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new SplashWindow().setVisible(true);
+                                }
+                            });
 
+                            // menutup koneksi dan window
+                            user.closeConnection();
+                            this.dispose();
+                        } else {
+                            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                            // mereset textfield jika login gagal
+                            this.inpUsername.setText("");
+                            this.inpPasswordLama.setText("");
+                        }
+                    }
+                }
+            }
+        } catch (IOException | AuthenticationException | InValidUserDataException | SQLException ex) {
+            this.inpUsername.setText("");
+            this.inpPasswordLama.setText("");
+            this.inpPasswordBaru.setText("");
+            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            // menampilkan pesan error
+            Message.showException(this, ex, true);
+        } catch (Exception ex) {
+            Logger.getLogger(GantiWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -112,6 +177,11 @@ public class GantiWindow extends javax.swing.JFrame {
                 inpUsernameActionPerformed(evt);
             }
         });
+        inpUsername.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                inpUsernameKeyPressed(evt);
+            }
+        });
         pnlMain.add(inpUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 240, 250, 30));
 
         lblMinimaze.setBackground(new java.awt.Color(50, 50, 55));
@@ -157,6 +227,11 @@ public class GantiWindow extends javax.swing.JFrame {
                 inpPasswordLamaActionPerformed(evt);
             }
         });
+        inpPasswordLama.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                inpPasswordLamaKeyPressed(evt);
+            }
+        });
         pnlMain.add(inpPasswordLama, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 289, 250, 28));
 
         inpPasswordBaru.setBorder(null);
@@ -164,6 +239,11 @@ public class GantiWindow extends javax.swing.JFrame {
         inpPasswordBaru.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inpPasswordBaruActionPerformed(evt);
+            }
+        });
+        inpPasswordBaru.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                inpPasswordBaruKeyPressed(evt);
             }
         });
         pnlMain.add(inpPasswordBaru, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 335, 250, 29));
@@ -252,69 +332,7 @@ public class GantiWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_inpPasswordLamaActionPerformed
 
     private void btnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseClicked
-        try {
-            boolean kosong = false;
-            this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            this.username = this.inpUsername.getText();
-            this.passwordLama = this.inpPasswordLama.getText();
-            this.passwordBaru = this.inpPasswordBaru.getText();
-            if (this.username.isEmpty()) {
-                kosong = true;
-                System.out.println("Username tidak boleh kosong");
-                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                Message.showWarning(this, "Username harus Di isi !");
-            } else if (this.passwordLama.isEmpty()) {
-                kosong = true;
-                System.out.println("Password Lama tidak boleh kosong");
-                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                Message.showWarning(this, "Password Lama harus Di isi !");
-            } else if (this.passwordBaru.isEmpty()) {
-                kosong = true;
-                System.out.println("Password Baru tidak boleh kosong");
-                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                Message.showWarning(this, "Password Baru harus Di isi !");
-            }
-            if (!kosong) {
-                JOptionPane.showMessageDialog(this, "Mohon tunggu sebentar\nSedang Memeriksa Username dan Password");
-                boolean check = user.validateSetPassword(this.username, this.passwordLama);
-                if (check) {
-                    boolean ganti = user.setPassword(this.username, this.passwordBaru);
-                    if (ganti) {
-                        JOptionPane.showMessageDialog(this, "Ganti Password berhasil \nSedang mengubah password !");
-                        boolean login = user.login(this.username, passwordBaru);
-                        if (login) {
-                            Audio.play(Audio.SOUND_INFO);
-                            JOptionPane.showMessageDialog(this, "Login Berhasil!\n\nSelamat datang " + user.getData(UserLevels.USERS.name(), "nama_karyawan", "WHERE id_karyawan = '" + user.getData(UserLevels.USERS.name(), "id_karyawan", "WHERE username = '" + this.username + "'") + "'"));
-                            // membuka window dashboard
-                            java.awt.EventQueue.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    new SplashWindow().setVisible(true);
-                                }
-                            });
-
-                            // menutup koneksi dan window
-                            user.closeConnection();
-                            this.dispose();
-                        } else {
-                            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                            // mereset textfield jika login gagal
-                            this.inpUsername.setText("");
-                            this.inpPasswordLama.setText("");
-                        }
-                    }
-                }
-            }
-        } catch (IOException | AuthenticationException | InValidUserDataException | SQLException ex) {
-            this.inpUsername.setText("");
-            this.inpPasswordLama.setText("");
-            this.inpPasswordBaru.setText("");
-            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            // menampilkan pesan error
-            Message.showException(this, ex, true);
-        } catch (Exception ex) {
-            Logger.getLogger(GantiWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        login();        
     }//GEN-LAST:event_btnLoginMouseClicked
 
     private void btnLoginMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseEntered
@@ -385,6 +403,24 @@ public class GantiWindow extends javax.swing.JFrame {
         this.btnKembali.setIcon(Gambar.getBiasaIcon(this.btnKembali.getIcon().toString()));
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_btnKembaliMouseExited
+
+    private void inpUsernameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpUsernameKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            inpPasswordLama.requestFocus();
+        }
+    }//GEN-LAST:event_inpUsernameKeyPressed
+
+    private void inpPasswordLamaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpPasswordLamaKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            inpPasswordBaru.requestFocus();
+        }
+    }//GEN-LAST:event_inpPasswordLamaKeyPressed
+
+    private void inpPasswordBaruKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpPasswordBaruKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+            login();
+        }
+    }//GEN-LAST:event_inpPasswordBaruKeyPressed
 
     public static void main(String args[]) {
 

@@ -435,7 +435,7 @@ public class LaporanJual extends javax.swing.JPanel {
 
     private void cetakNota(Map parameter) {
         try {
-            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\laporanPemasukan.jrxml");
+            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\LaporanPemasukan.jrxml");
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameter, trj.conn);
             JasperViewer.viewReport(jPrint);
@@ -1120,7 +1120,6 @@ public class LaporanJual extends javax.swing.JPanel {
     private void btnDetailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetailMouseClicked
         boolean erorr = false;
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        JTable tabel = new JTable();
         switch (this.selectedIndex) {
             case 1:
                 if (this.tabelDataS.getSelectedRow() < 0) {
