@@ -449,7 +449,7 @@ public class LaporanBeli extends javax.swing.JPanel {
             JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\LaporanPengeluaran.jrxml");
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameter, trb.conn);
-            JasperViewer.viewReport(jPrint);
+            JasperViewer.viewReport(jPrint,false);
         } catch (JRException ex) {
             Logger.getLogger(LaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1161,7 +1161,7 @@ public class LaporanBeli extends javax.swing.JPanel {
             }
             if (!erorr) {
                 Audio.play(Audio.SOUND_INFO);
-                DetailLaporanBeli detail = new DetailLaporanBeli(this.idTr);
+                DetailLaporanBeli detail = new DetailLaporanBeli(this.idTr, false);
                 this.dataDetail(detail);
                 this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
@@ -1309,12 +1309,18 @@ public class LaporanBeli extends javax.swing.JPanel {
         Map parameters = new HashMap();
         switch (this.selectedIndex) {
             case 1:
+                parameters.put("rentangTanggal"," semua tanggal");
+                parameters.put("totalPengeluaran",this.tPengeluaran);
+                parameters.put("query","");
                 this.cetakNota(parameters);
                 this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 break;
             case 2:
                 if (tabelDataH.getRowCount() > 0) {
-                    parameters.put("tanggal", tbHarian.getDate());
+                    parameters.put("rentangTanggal",tbHarian.getDate());
+                    parameters.put("totalPengeluaran",this.tPengeluaran);
+//                    parameters.put("tanggal", tbHarian.getDate());
+                    parameters.put("query","");
                     this.cetakNota(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {
@@ -1324,8 +1330,11 @@ public class LaporanBeli extends javax.swing.JPanel {
                 break;
             case 3:
                 if (tabelDataB.getRowCount() > 0) {
-                    parameters.put("bulan", tbBulanan.getMonth());
-                    parameters.put("tahun", tbTahunan.getYear());
+                    parameters.put("rentangTanggal"," bulan "+tbBulanan.getMonth() + " tahun "+tbTahunan.getYear());
+                    parameters.put("totalPengeluaran",this.tPengeluaran);
+//                    parameters.put("bulan", tbBulanan.getMonth());
+//                    parameters.put("tahun", tbTahunan.getYear());
+                    parameters.put("query","");
                     this.cetakNota(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {
@@ -1335,8 +1344,11 @@ public class LaporanBeli extends javax.swing.JPanel {
                 break;
             case 4:
                 if (tabelDataM.getRowCount() > 0) {
-                    parameters.put("tanggalAwal", tbMinggu1.getDate());
-                    parameters.put("tanggalAkhir", tbMinggu2.getDate());
+                    parameters.put("rentangTanggal",tbMinggu1.getDate()+"s.d."+tbMinggu2.getDate());
+                    parameters.put("totalPengeluaran",this.tPengeluaran);
+//                    parameters.put("tanggalAwal", tbMinggu1.getDate());
+//                    parameters.put("tanggalAkhir", tbMinggu2.getDate());
+                    parameters.put("query","");
                     this.cetakNota(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {

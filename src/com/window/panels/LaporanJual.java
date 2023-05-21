@@ -56,7 +56,7 @@ public class LaporanJual extends javax.swing.JPanel {
 
     private final Text text = new Text();
 
-    DateFormat tanggalMilis = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private final DateFormat tanggalMilis = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     private final DateFormat tanggalFull = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ");
     private final DateFormat date = new SimpleDateFormat("dd-MM-yyyy");
     private final DateFormat date1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -355,8 +355,6 @@ public class LaporanJual extends javax.swing.JPanel {
             int rows = 0, hari_1 = 0, bulan_1 = -1, tahun_1 = 0;
             String sql = "SELECT id_tr_jual, id_karyawan, nama_karyawan, total_hrg, keuntungan, tanggal FROM transaksi_jual " + keyword + " ORDER BY id_tr_jual DESC", tanggalPenuh, tanggalPenuh1;
             obj = new Object[trj.getJumlahData("transaksi_jual", keyword)][7];
-//            System.out.println("total baris pada tabel "+trj.getJumlahData("transaksi_jual", keyword));
-
             // mengeksekusi query
             trj.res = trj.stat.executeQuery(sql);
             // mendapatkan semua data yang ada didalam tabel
@@ -438,7 +436,7 @@ public class LaporanJual extends javax.swing.JPanel {
             JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\LaporanPemasukan.jrxml");
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameter, trj.conn);
-            JasperViewer.viewReport(jPrint);
+            JasperViewer.viewReport(jPrint,false);
         } catch (JRException ex) {
 //            Logger.getLogger(LaporanJual.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1157,7 +1155,7 @@ public class LaporanJual extends javax.swing.JPanel {
         if (!erorr) {
             try {
                 Audio.play(Audio.SOUND_INFO);
-                DetailLaporanJual detail = new DetailLaporanJual(this.idTr);
+                DetailLaporanJual detail = new DetailLaporanJual(this.idTr, false);
                 this.dataDetail(detail);
                 this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             } catch (ParseException ex) {
@@ -1306,12 +1304,30 @@ public class LaporanJual extends javax.swing.JPanel {
         Map parameters = new HashMap();
         switch (this.selectedIndex) {
             case 1:
+                parameters.put("rentangTanggal"," semua tanggal");
+                parameters.put("totalPemasukan",this.tPemasukan);
+                parameters.put("query","");
+//                parameters.put("tanggal", "");
+//                parameters.put("bulan", "");
+//                parameters.put("tahun", "");
+//                parameters.put("tanggalAwal","");
+//                parameters.put("tanggalAkhir", "");
+//                System.out.println("SELECT id_tr_jual, id_karyawan, nama_karyawan, CONCAT(\"Rp \",FORMAT(COALESCE(total_hrg,'0'),0)) AS total, \n" +
+//"CONCAT(\"Rp \",FORMAT(COALESCE(jumlah_diskon, '0'),0))  AS diskon,\n" +
+//"CONCAT(\"Rp \",FORMAT(COALESCE(keuntungan,'0'),0))AS keuntungan, DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal FROM transaksi_jual ;"+"");
                 this.cetakNota(parameters);
                 this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 break;
             case 2:
                 if (tabelDataH.getRowCount() > 0) {
-                    parameters.put("tanggal", tbHarian.getDate());
+                    parameters.put("rentangTanggal",tbHarian.getDate());
+                    parameters.put("totalPemasukan",this.tPemasukan);
+                    parameters.put("query"," WHERE DATE(tanggal) = "+tbHarian.getDate());
+//                    parameters.put("tanggal", tbHarian.getDate());
+//                    parameters.put("bulan", "");
+//                    parameters.put("tahun", "");
+//                    parameters.put("tanggalAwal","");
+//                    parameters.put("tanggalAkhir", "");
                     this.cetakNota(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {
@@ -1321,8 +1337,12 @@ public class LaporanJual extends javax.swing.JPanel {
                 break;
             case 3:
                 if (tabelDataB.getRowCount() > 0) {
-                    parameters.put("bulan", tbBulanan.getMonth());
-                    parameters.put("tahun", tbTahunan.getYear());
+                    parameters.put("rentangTanggal"," bulan "+tbBulanan.getMonth() + " tahun "+tbTahunan.getYear());
+                    parameters.put("totalPemasukan",this.tPemasukan);
+                    parameters.put("query"," WHERE MONTH(tanggal) = "+tbBulanan.getMonth()+" AND YEAR(tanggal) = "+tbTahunan.getYear());
+//                    parameters.put("tanggal","");
+//                    parameters.put("bulan", tbBulanan.getMonth());
+//                    parameters.put("tahun", tbTahunan.getYear());
                     this.cetakNota(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {
@@ -1332,8 +1352,14 @@ public class LaporanJual extends javax.swing.JPanel {
                 break;
             case 4:
                 if (tabelDataM.getRowCount() > 0) {
-                    parameters.put("tanggalAwal", tbMinggu1.getDate());
-                    parameters.put("tanggalAkhir", tbMinggu2.getDate());
+                    parameters.put("rentangTanggal",tbMinggu1.getDate()+"s.d."+tbMinggu2.getDate());
+                    parameters.put("totalPemasukan",this.tPemasukan);
+                    parameters.put("query"," WHERE DATE(tanggal) >= "+tbMinggu1.getDate()+" AND DATE(tanggal) <= "+tbMinggu2.getDate());
+//                    parameters.put("tanggal","");
+//                    parameters.put("bulan", "");
+//                    parameters.put("tahun", "");
+//                    parameters.put("tanggalAwal", tbMinggu1.getDate());
+//                    parameters.put("tanggalAkhir", tbMinggu2.getDate());
                     this.cetakNota(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {

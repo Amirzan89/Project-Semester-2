@@ -32,10 +32,8 @@ import java.awt.event.*;
  * @since 2020-11-22
  */
 public class LoginWindow extends javax.swing.JFrame implements DocumentListener, ActionListener{
-
     private final Users user = new Users();
     private String username = "", password;
-    private int x, y;
     private Timer timer;
     public LoginWindow() {
         initComponents();
@@ -45,9 +43,7 @@ public class LoginWindow extends javax.swing.JFrame implements DocumentListener,
         this.timer.setRepeats(false);
         this.inpRFID.getDocument().addDocumentListener(this);
         this.inpTutupRFID.setEditable(false);
-//        this.inpRFID.setVisible(false);
     }
-
     private void rfid(String rfid) {
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         try {
@@ -72,7 +68,6 @@ public class LoginWindow extends javax.swing.JFrame implements DocumentListener,
                         new SplashWindow().setVisible(true);
                     }
                 });
-
                 // menutup koneksi dan window
                 user.closeConnection();
                 this.dispose();
@@ -116,10 +111,11 @@ public class LoginWindow extends javax.swing.JFrame implements DocumentListener,
             if (!kosong) {
                 JOptionPane.showMessageDialog(this, "Mohon tunggu sebentar\nSedang Memeriksa Username dan Password");
                 boolean login = user.login(this.username, password);
-//                login = true;
                 if (login) {
                     Audio.play(Audio.SOUND_INFO);
-                    JOptionPane.showMessageDialog(this, "Login Berhasil!\n\nSelamat datang " + user.getData(UserLevels.USERS.name(), "nama_karyawan", "WHERE id_karyawan = '" + user.getData(UserLevels.USERS.name(), "id_karyawan", "WHERE username = '" + this.username + "'") + "'"));
+                    JOptionPane.showMessageDialog(this, "Login Berhasil!\n\nSelamat datang " + 
+                            user.getData(UserLevels.USERS.name(), "nama_karyawan","WHERE id_karyawan = '" + 
+                                    user.getData(UserLevels.USERS.name(), "id_karyawan", "WHERE username = '" + this.username + "'") + "'"));
                     // membuka window dashboard
                     java.awt.EventQueue.invokeLater(new Runnable() {
                         @Override

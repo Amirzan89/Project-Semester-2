@@ -443,7 +443,6 @@ public class DataDiskon extends javax.swing.JPanel {
             Audio.play(Audio.SOUND_INFO);
             InputDiskon tbh = new InputDiskon(null, true, null);
             tbh.setVisible(true);
-            
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             // mengecek apakah diskon jadi menambahkan data atau tidak
             if (tbh.isUpdated()) {
@@ -537,7 +536,6 @@ public class DataDiskon extends javax.swing.JPanel {
     private void btnKembaliMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKembaliMouseExited
         this.btnKembali.setIcon(Gambar.getBiasaIcon(this.btnKembali.getIcon().toString()));
     }//GEN-LAST:event_btnKembaliMouseExited
-
     private void dataBarang(JPanel pnl) {
         //jika btn diskon di window barang di klik
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));

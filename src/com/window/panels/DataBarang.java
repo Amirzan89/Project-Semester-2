@@ -30,7 +30,6 @@ public class DataBarang extends javax.swing.JPanel {
     private final Barcode barcode = new Barcode();
     private int tahun, bulan;
     private final Text text = new Text();
-
     private String idSelected = "", keyword = "", namaBarang, jenis, stok, hargaBeli, hargaJual, ttlPenjulan, penghasilan, bar;
     private Object[][] obj;
     public DataBarang() {
@@ -42,40 +41,29 @@ public class DataBarang extends javax.swing.JPanel {
         this.btnEdit.setUI(new javax.swing.plaf.basic.BasicButtonUI());
         this.btnDel.setUI(new javax.swing.plaf.basic.BasicButtonUI());
         this.btnDiskon.setUI(new javax.swing.plaf.basic.BasicButtonUI());
-
         this.tabelData.setRowHeight(29);
         this.tabelData.getTableHeader().setBackground(new java.awt.Color(255, 255, 255));
         this.tabelData.getTableHeader().setForeground(new java.awt.Color(0, 0, 0));
-
         JLabel[] values = {
             this.valIDBarang, this.valNamaBarang, this.valJenis, this.valStok,
             this.valHargaBeli, this.valHargaJual, this.valPjln, this.valPjlnBulan, this.valPenghasilan, this.valBarcode
         };
-
         for (JLabel lbl : values) {
             lbl.addMouseListener(new java.awt.event.MouseListener() {
-
                 @Override
                 public void mouseClicked(MouseEvent e) {
-
                 }
-
                 @Override
                 public void mousePressed(MouseEvent e) {
-
                 }
-
                 @Override
                 public void mouseReleased(MouseEvent e) {
-
                 }
-
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     setCursor(new Cursor(Cursor.HAND_CURSOR));
                     lbl.setForeground(new Color(15, 98, 230));
                 }
-
                 @Override
                 public void mouseExited(MouseEvent e) {
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -83,7 +71,6 @@ public class DataBarang extends javax.swing.JPanel {
                 }
             });
         }
-
         this.updateTabel();
     }
 
@@ -153,7 +140,6 @@ public class DataBarang extends javax.swing.JPanel {
 
     private Object[][] getData() {
         try {
-//            Object obj[][];
             int rows = 0;
             String sql = "SELECT id_barang, nama_barang, jenis_barang, stok, harga_beli, harga_jual FROM barang " + keyword;
             // mendefinisikan object berdasarkan total rows dan cols yang ada didalam tabel
@@ -385,7 +371,6 @@ public class DataBarang extends javax.swing.JPanel {
             Audio.play(Audio.SOUND_INFO);
             InputBarang tbh = new InputBarang(null, true, this.idSelected);
             tbh.setVisible(true);
-
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             // mengecek apakah barang jadi mengedit data atau tidak
             if (tbh.isUpdated()) {
@@ -443,7 +428,8 @@ public class DataBarang extends javax.swing.JPanel {
         if (tabelData.getSelectedRow() > -1) {
             // membuka confirm dialog untuk menghapus data
             Audio.play(Audio.SOUND_INFO);
-            status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus '" + this.namaBarang + "' ?", "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+            status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus '" + 
+                    this.namaBarang + "' ?", "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
             // mengecek pilihan dari barang
             switch (status) {
                 // jika yes maka data akan dihapus
@@ -487,11 +473,10 @@ public class DataBarang extends javax.swing.JPanel {
     }//GEN-LAST:event_inpCariActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // membuka window input pembeli
+        // membuka window input barang
         Audio.play(Audio.SOUND_INFO);
         InputBarang tbh = new InputBarang(null, true, null);
         tbh.setVisible(true);
-
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         // mengecek apakah barang jadi menambahkan data atau tidak
         if (tbh.isUpdated()) {
@@ -517,7 +502,6 @@ public class DataBarang extends javax.swing.JPanel {
     private void btnDiskonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDiskonMouseExited
         this.btnDiskon.setIcon(Gambar.getBiasaIcon(this.btnDiskon.getIcon().toString()));
     }//GEN-LAST:event_btnDiskonMouseExited
-
     private void dataDiskon(JPanel pnl){
         //jika btn diskon di window barang di klik
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -532,7 +516,6 @@ public class DataBarang extends javax.swing.JPanel {
         MainWindow.pnlMenu.validate();
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
-    
     private void btnDiskonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDiskonActionPerformed
             DataDiskon pnl = new DataDiskon();
             this.dataDiskon(pnl);

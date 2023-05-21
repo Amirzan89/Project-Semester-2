@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -42,9 +43,22 @@ public class DetailLaporanJual extends javax.swing.JPanel {
     private final DateFormat timeMillis = new SimpleDateFormat("ss.SSS:mm:hh");
     private String idTrSelected = "", idSelected = "", keyword = "", idTr, idPd, IDSupplier, namaSupplier, IDBarang, namaBarang, jenisBarang, jumlahBarang;
     private int selectedIndex, totalHrg, harga;
-
-    public DetailLaporanJual(String idtr) throws ParseException {
+    private boolean Tr = false;
+    public DetailLaporanJual(String idtr, boolean transaksi) throws ParseException {
         initComponents();
+        if(transaksi == true){
+            this.Tr = true;
+            this.valJudul.setText("Riwayat Penjualan");
+            ImageIcon icon1 = new ImageIcon("src\\resources\\image\\gambar\\app-riwayatPenjualanDetail.png");
+            this.background.setIcon(icon1);
+            this.valIDPemasukan.setVisible(false);
+        }else{
+            this.Tr = false;
+            this.valJudul.setText("Detail Laporan Pemasukan");
+            ImageIcon icon1 = new ImageIcon("src\\resources\\image\\gambar\\app-detail-laporan-pemasukan.png");
+            this.background.setIcon(icon1);
+            this.valIDPemasukan.setVisible(true);
+        }
         this.btnKembali.setUI(new javax.swing.plaf.basic.BasicButtonUI());
         this.btnPrint.setUI(new javax.swing.plaf.basic.BasicButtonUI());
 
@@ -52,6 +66,7 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         this.tabelData.getTableHeader().setBackground(new java.awt.Color(255, 255, 255));
         this.tabelData.getTableHeader().setForeground(new java.awt.Color(0, 0, 0));
         this.idTrSelected = idtr;
+        System.out.println("id detail "+this.idTrSelected);
         keyword = "WHERE id_tr_jual = '" + this.idTrSelected + "'";
         this.updateTabel();
         valTotal.setText(text.toMoneyCase(Integer.toString(getTotal("detail_transaksi_jual", "total_harga", "WHERE id_tr_jual = '" + this.idTrSelected + "'"))));
@@ -83,10 +98,10 @@ public class DetailLaporanJual extends javax.swing.JPanel {
 
     private void cetakNota(Map parameter) {
         try {
-            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\notaPenjualan.jrxml");
+            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\strukPenjualan.jrxml");
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameter, trj.conn);
-            JasperViewer.viewReport(jPrint);
+            JasperViewer.viewReport(jPrint,false);
         } catch (JRException ex) {
             Logger.getLogger(DetailLaporanJual.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -96,29 +111,55 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         try {
             Object[][] obj;
             int rows = 0;
-            String sql = "SELECT id_tr_jual, id_barang, nama_barang, jenis_barang, harga, jumlah, total_harga FROM detail_transaksi_jual " + keyword + " ORDER BY jenis_barang DESC";
-//            System.out.println(sql);
-            obj = new Object[trj.getJumlahData("detail_transaksi_jual", keyword)][8];
-            // mengeksekusi query
-            trj.res = trj.stat.executeQuery(sql);
-            // mendapatkan semua data yang ada didalam this.tabelData
-            while (trj.res.next()) {
-                // menyimpan data dari this.tabelData ke object
-                obj[rows][0] = trj.res.getString("id_tr_jual").replace("TRJ", "LPD");
-                obj[rows][1] = trj.res.getString("id_tr_jual");
-                if(trj.res.getString("id_barang") == null){
-                    obj[rows][2] = "";
-                }else{
-                    obj[rows][2] = trj.res.getString("id_barang");
+            if (this.Tr == true) {
+                String sql = "SELECT id_tr_jual, id_barang, nama_barang, jenis_barang, harga, jumlah, total_harga FROM detail_transaksi_jual " + 
+                        keyword + " ORDER BY jenis_barang DESC";
+                System.out.println("sql "+sql);
+                obj = new Object[trj.getJumlahData("detail_transaksi_jual", keyword)][7];
+                // mengeksekusi query
+                trj.res = trj.stat.executeQuery(sql);
+                // mendapatkan semua data yang ada didalam this.tabelData
+                while (trj.res.next()) {
+                    // menyimpan data dari this.tabelData ke object
+                    obj[rows][0] = trj.res.getString("id_tr_jual");
+                    if (trj.res.getString("id_barang") == null) {
+                        obj[rows][1] = "";
+                    } else {
+                        obj[rows][1] = trj.res.getString("id_barang");
+                    }
+                    obj[rows][2] = trj.res.getString("nama_barang");
+                    obj[rows][3] = trj.res.getString("jenis_barang");
+                    obj[rows][4] = text.toMoneyCase(Integer.toString(trj.res.getInt("harga")));
+                    obj[rows][5] = Integer.toString(trj.res.getInt("jumlah"));
+                    obj[rows][6] = text.toMoneyCase(Integer.toString(trj.res.getInt("total_harga")));
+                    rows++;
                 }
-                obj[rows][3] = trj.res.getString("nama_barang");
-                obj[rows][4] = trj.res.getString("jenis_barang");
-                obj[rows][5] = text.toMoneyCase(Integer.toString(trj.res.getInt("harga")));
-                obj[rows][6] = Integer.toString(trj.res.getInt("jumlah"));
-                obj[rows][7] = text.toMoneyCase(Integer.toString(trj.res.getInt("total_harga")));
-                rows++;
+                return obj;
+            } else {
+                String sql = "SELECT id_tr_jual, id_barang, nama_barang, jenis_barang, harga, jumlah, total_harga FROM detail_transaksi_jual " + 
+                        keyword + " ORDER BY jenis_barang DESC";
+                obj = new Object[trj.getJumlahData("detail_transaksi_jual", keyword)][8];
+                // mengeksekusi query
+                trj.res = trj.stat.executeQuery(sql);
+                // mendapatkan semua data yang ada didalam this.tabelData
+                while (trj.res.next()) {
+                    // menyimpan data dari this.tabelData ke object
+                    obj[rows][0] = trj.res.getString("id_tr_jual").replace("TRJ", "LPD");
+                    obj[rows][1] = trj.res.getString("id_tr_jual");
+                    if (trj.res.getString("id_barang") == null) {
+                        obj[rows][2] = "";
+                    } else {
+                        obj[rows][2] = trj.res.getString("id_barang");
+                    }
+                    obj[rows][3] = trj.res.getString("nama_barang");
+                    obj[rows][4] = trj.res.getString("jenis_barang");
+                    obj[rows][5] = text.toMoneyCase(Integer.toString(trj.res.getInt("harga")));
+                    obj[rows][6] = Integer.toString(trj.res.getInt("jumlah"));
+                    obj[rows][7] = text.toMoneyCase(Integer.toString(trj.res.getInt("total_harga")));
+                    rows++;
+                }
+                return obj;
             }
-            return obj;
         } catch (SQLException ex) {
             ex.printStackTrace();
             Message.showException(this, "Terjadi kesalahan saat mengambil data dari database\n" + ex.getMessage(), ex, true);
@@ -127,33 +168,53 @@ public class DetailLaporanJual extends javax.swing.JPanel {
     }
 
     private void updateTabel() throws ParseException {
-        this.tabelData.setModel(new javax.swing.table.DefaultTableModel(
-                getData(),
-                new String[]{
-                    "ID Pemasukan", "ID Transaksi Jual", "ID Barang", "Nama Barang", "Jenis Brang", "Harga Jual", "Jumlah", "Total Harga"
-                }
-        ) {
-            boolean[] canEdit = new boolean[]{
-                false, false, false, false, false, false, false, false
-            };
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit[columnIndex];
-            }
-        });
+        if (this.Tr == true) {
+            this.tabelData.setModel(new javax.swing.table.DefaultTableModel(
+                    getData(),new String[]{
+                        "ID Transaksi Jual", "ID Barang", "Nama Barang", "Jenis Brang", "Harga Jual", "Jumlah", "Total Harga"
+                    }) {
+                boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false, false, false
+                };
+                @Override
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit[columnIndex];
+                }});
+        } else {
+            this.tabelData.setModel(new javax.swing.table.DefaultTableModel(
+                    getData(), new String[]{
+                        "ID Pemasukan", "ID Transaksi Jual", "ID Barang", "Nama Barang", "Jenis Brang", "Harga Jual", "Jumlah", "Total Harga"
+                    }) {
+                boolean[] canEdit = new boolean[]{
+                    false, false, false, false, false, false, false, false
+                };
+                @Override
+                public boolean isCellEditable(int rowIndex, int columnIndex) { 
+                    return canEdit[columnIndex];
+                }});
+        }
     }
 
     private void showData(int index) throws ParseException {
         // mendapatkan data-data
-        this.idPd = this.tabelData.getValueAt(index, 0).toString();
-        this.idTr = this.tabelData.getValueAt(index, 1).toString();
-        this.IDBarang = this.tabelData.getValueAt(index, 2).toString();
-        this.namaBarang = this.tabelData.getValueAt(index, 3).toString();
-        this.jenisBarang = this.tabelData.getValueAt(index, 4).toString();
-        this.harga = text.toIntCase(this.tabelData.getValueAt(index, 5).toString());
-        this.jumlahBarang = this.tabelData.getValueAt(index, 6).toString();
-        this.totalHrg = text.toIntCase(this.tabelData.getValueAt(index, 7).toString());
+        if (this.Tr == true) {
+            this.idTr = this.tabelData.getValueAt(index, 0).toString();
+            this.IDBarang = this.tabelData.getValueAt(index, 1).toString();
+            this.namaBarang = this.tabelData.getValueAt(index, 2).toString();
+            this.jenisBarang = this.tabelData.getValueAt(index, 3).toString();
+            this.harga = text.toIntCase(this.tabelData.getValueAt(index, 4).toString());
+            this.jumlahBarang = this.tabelData.getValueAt(index, 5).toString();
+            this.totalHrg = text.toIntCase(this.tabelData.getValueAt(index, 6).toString());
+        } else {
+            this.idPd = this.tabelData.getValueAt(index, 0).toString();
+            this.idTr = this.tabelData.getValueAt(index, 1).toString();
+            this.IDBarang = this.tabelData.getValueAt(index, 2).toString();
+            this.namaBarang = this.tabelData.getValueAt(index, 3).toString();
+            this.jenisBarang = this.tabelData.getValueAt(index, 4).toString();
+            this.harga = text.toIntCase(this.tabelData.getValueAt(index, 5).toString());
+            this.jumlahBarang = this.tabelData.getValueAt(index, 6).toString();
+            this.totalHrg = text.toIntCase(this.tabelData.getValueAt(index, 7).toString());
+        }
 
         // menampilkan data-data
         this.valIDPemasukan.setText("<html><p>:&nbsp;" + this.idPd + "</p></html>");
@@ -184,6 +245,7 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         valTotalHarga = new javax.swing.JLabel();
         valJumlah = new javax.swing.JLabel();
         valTotal = new javax.swing.JLabel();
+        valJudul = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -290,7 +352,7 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         valIDPemasukan.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         valIDPemasukan.setForeground(new java.awt.Color(0, 0, 0));
         valIDPemasukan.setText(":");
-        add(valIDPemasukan, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 70, 410, 35));
+        add(valIDPemasukan, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 205, 410, 35));
 
         valIDTransaksi.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         valIDTransaksi.setForeground(new java.awt.Color(0, 0, 0));
@@ -320,7 +382,7 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         valTotalHarga.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         valTotalHarga.setForeground(new java.awt.Color(0, 0, 0));
         valTotalHarga.setText(":");
-        add(valTotalHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 205, 410, 35));
+        add(valTotalHarga, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 70, 410, 35));
 
         valJumlah.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         valJumlah.setForeground(new java.awt.Color(0, 0, 0));
@@ -332,6 +394,11 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         valTotal.setForeground(new java.awt.Color(0, 0, 0));
         valTotal.setText(":");
         add(valTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 585, 280, 25));
+
+        valJudul.setFont(new java.awt.Font("Franklin Gothic Medium Cond", 0, 36)); // NOI18N
+        valJudul.setForeground(new java.awt.Color(42, 64, 69));
+        valJudul.setText("Detail Laporan Pemasukan");
+        add(valJudul, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 5, 380, -1));
 
         background.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/image/gambar/app-detail-laporan-pemasukan.png"))); // NOI18N
         background.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -361,9 +428,13 @@ public class DetailLaporanJual extends javax.swing.JPanel {
     }
     private void btnKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnKembaliActionPerformed
         try {
-//            barang.closeConnection();
-            LaporanJual pnl = new LaporanJual();
-            this.dataLaporan(pnl);
+            if(this.Tr == true){
+                RiwayatTransaksi pnl = new RiwayatTransaksi(false);
+                this.dataLaporan(pnl);
+            } else {
+                LaporanBeli pnl = new LaporanBeli();
+                this.dataLaporan(pnl);
+            }
         } catch (ParseException ex) {
             Logger.getLogger(DetailLaporanJual.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -440,7 +511,6 @@ public class DetailLaporanJual extends javax.swing.JPanel {
     }//GEN-LAST:event_btnPrintMouseExited
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        // TODO add your handling code here:
         Map parameters = new HashMap();
         parameters.put("id_tr_jual", this.idTr);
         this.cetakNota(parameters);
@@ -458,6 +528,7 @@ public class DetailLaporanJual extends javax.swing.JPanel {
     private javax.swing.JLabel valIDPemasukan;
     private javax.swing.JLabel valIDTransaksi;
     private javax.swing.JLabel valJenis;
+    private javax.swing.JLabel valJudul;
     private javax.swing.JLabel valJumlah;
     private javax.swing.JLabel valNamaBarang;
     private javax.swing.JLabel valTotal;

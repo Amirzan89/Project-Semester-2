@@ -59,7 +59,6 @@ public class Dashboard extends javax.swing.JPanel {
         this.chart.showPieChart(this.pnlPieChart, "", pMakanan, pMinuman, pSnack, pAtk);
         obj = waktu.getMinggu(bulan, tahun);
         this.chart.showLineChart(pnlLineChart,obj);
-
         // mengupdate waktu
         new Thread(new Runnable() {
 
