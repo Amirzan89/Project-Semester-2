@@ -105,9 +105,11 @@ public class Chart {
         }
         return -1;
     }
+    public void showPieChart(JPanel panel, String title, double makanan, double minuman, double snack, double atk){
+        this.showPieChart(panel, title, F_PRODUK, makanan, minuman, snack, atk);
+    }
     //digunakan untuk menampilkan piechart
     public void showPieChart(JPanel panel, String title, Font font, double makanan, double minuman, double snack, double atk){
-        
         //create dataset
         DefaultPieDataset barDataset = new DefaultPieDataset();
         if(makanan > 0){
@@ -125,7 +127,6 @@ public class Chart {
         //create chart
         JFreeChart piechart = ChartFactory.createPieChart("Penjualan Produk",barDataset, false,true,false);//explain
         piechart.setTitle(new TextTitle(title, font));
-
         //changing pie chart blocks colors
         PiePlot piePlot =(PiePlot) piechart.getPlot();
         piePlot.setSectionPaint("Makanan", this.C_MAKANAN);
@@ -133,17 +134,13 @@ public class Chart {
         piePlot.setSectionPaint("Snack", this.C_SNACK);
         piePlot.setSectionPaint("ATK", this.C_ATK);
         piePlot.setBackgroundPaint(this.BG_CHART);
-
         //create chartPanel to display chart(graph)
         ChartPanel barChartPanel = new ChartPanel(piechart);
         panel.removeAll();
         panel.add(barChartPanel, BorderLayout.CENTER);
         panel.validate();
     }
-
-    public void showPieChart(JPanel panel, String title, double makanan, double minuman, double snack, double atk){
-        this.showPieChart(panel, title, F_PRODUK, makanan, minuman, snack, atk);
-    }
+    
     //digunakan untuk menampilkan line chart berdasarkan mingguan
     public void showLineChart(JPanel panel, Object[] obj) throws ParseException {
         //create dataset for the graph

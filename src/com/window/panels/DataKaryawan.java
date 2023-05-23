@@ -88,12 +88,8 @@ public class DataKaryawan extends javax.swing.JPanel {
             Object[][] obj;
             int rows = 0;
             String sql = "SELECT id_karyawan, nama_karyawan, level FROM users " + this.keyword + " ORDER BY id_karyawan";
-            // mendefinisikan object berdasarkan total rows dan cols yang ada didalam tabel
-//            System.out.println(sql);
             obj = new Object[user.getJumlahData(DatabaseTables.USERS.name(), this.keyword)][3];
-            // mengeksekusi query
             user.res = user.stat.executeQuery(sql);
-            // mendapatkan semua data yang ada didalam tabel
             while (user.res.next()) {
                 // menyimpan data dari tabel ke object
                 obj[rows][0] = user.res.getString("id_karyawan");
@@ -206,7 +202,7 @@ public class DataKaryawan extends javax.swing.JPanel {
         valAlamat.setText(":");
         add(valAlamat, new org.netbeans.lib.awtextra.AbsoluteConstraints(215, 340, 325, 45));
 
-        inpCari.setBackground(new java.awt.Color(0, 0, 0));
+        inpCari.setBackground(new java.awt.Color(255, 255, 255));
         inpCari.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         inpCari.setForeground(new java.awt.Color(0, 0, 0));
         inpCari.addActionListener(new java.awt.event.ActionListener() {
@@ -222,7 +218,7 @@ public class DataKaryawan extends javax.swing.JPanel {
                 inpCariKeyTyped(evt);
             }
         });
-        add(inpCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 80, 180, 23));
+        add(inpCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 78, 180, 23));
 
         btnTambah.setBackground(new java.awt.Color(41, 180, 50));
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));
@@ -361,29 +357,22 @@ public class DataKaryawan extends javax.swing.JPanel {
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         int status;
         boolean delete;
-
         // mengecek apakah user memiliki level admin
         if (user.isAdmin()) {
-            // mengecek apakah ada data yang dipilih atau tidak
             if (tabelData.getSelectedRow() > -1) {
                 //mengecek apakah id user yang dipilih sama dengan id user yang sekarang login
                 if (this.idSelected.equals(this.user.getIdKaryawan(this.user.getCurrentLogin()))) {
                     Message.showWarning(this, "Anda tidak bisa menghapus data Anda sendiri!");
                 } else {
-                    // membuka confirm dialog untuk menghapus data
                     Audio.play(Audio.SOUND_INFO);
-                    status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus '" + this.namaPetugas + "' ?", "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
-                    // mengecek pilihan dari user
+                    status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus '" + this.namaPetugas + "' ?", "Confirm", 
+                            JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
                     switch (status) {
-                        // jika yes maka data akan dihapus
                         case JOptionPane.YES_OPTION:
-                            // menghapus data user
                             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
                             delete = this.user.deleteKaryawan(this.idSelected);
-                            // mengecek apakah data user berhasil terhapus atau tidak
                             if (delete) {
                                 Message.showInformation(this, "Data berhasil dihapus!");
-                                // mengupdate tabel
                                 this.updateTabel();
                                 this.resetData();
                             } else {
@@ -408,7 +397,6 @@ public class DataKaryawan extends javax.swing.JPanel {
             Audio.play(Audio.SOUND_INFO);
             InputKaryawan tbh = new InputKaryawan(null, true, null);
             tbh.setVisible(true);
-
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             // mengecek apakah user jadi menambahkan data atau tidak
             if (tbh.isUpdated()) {
@@ -431,7 +419,6 @@ public class DataKaryawan extends javax.swing.JPanel {
                 Audio.play(Audio.SOUND_INFO);
                 InputKaryawan tbh = new InputKaryawan(null, true, this.idSelected);
                 tbh.setVisible(true);
-
                 this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
                 // mengecek apakah user jadi mengedit data atau tidak
                 if (tbh.isUpdated()) {
@@ -512,19 +499,19 @@ public class DataKaryawan extends javax.swing.JPanel {
 
     private void inpCariKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpCariKeyTyped
         String key = this.inpCari.getText();
-        this.keyword = "WHERE user.id_user LIKE '%" + key + "%' OR user.nama_user LIKE '%" + key + "%'";
+        this.keyword = "WHERE id_karyawan LIKE '%" + key + "%' OR nama_karyawan LIKE '%" + key + "%'";
         this.updateTabel();
     }//GEN-LAST:event_inpCariKeyTyped
 
     private void inpCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inpCariActionPerformed
         String key = this.inpCari.getText();
-        this.keyword = "WHERE user.id_user LIKE '%" + key + "%' OR user.nama_user LIKE '%" + key + "%'";
+        this.keyword = "WHERE id_karyawan LIKE '%" + key + "%' OR nama_karyawan LIKE '%" + key + "%'";
         this.updateTabel();
     }//GEN-LAST:event_inpCariActionPerformed
 
     private void inpCariKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inpCariKeyReleased
         String key = this.inpCari.getText();
-        this.keyword = "WHERE user.id_user LIKE '%" + key + "%' OR user.nama_user LIKE '%" + key + "%'";
+        this.keyword = "WHERE id_karyawan LIKE '%" + key + "%' OR nama_karyawan LIKE '%" + key + "%'";
         this.updateTabel();
     }//GEN-LAST:event_inpCariKeyReleased
 

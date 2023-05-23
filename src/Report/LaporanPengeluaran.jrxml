@@ -6,17 +6,21 @@
 	<subDataset name="dataset1" uuid="c1402549-6146-4073-be42-42995514dc9d"/>
 	<parameter name="tanggalAwal" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="tanggalAkhir" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="tanggal" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="tanggal" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<parameter name="bulan" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="tahun" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="totalPemasukan" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="totalPengeluaran" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
 	<parameter name="rentangTanggal" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="query" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[" WHERE DATE(tanggal) = 2023-05-19"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT id_tr_beli, id_karyawan, nama_karyawan, CONCAT("Rp ",FORMAT(COALESCE(total_hrg,'0'),0)) AS total,
- DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal FROM transaksi_beli $P!{query};]]>
+ DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal FROM transaksi_beli;]]>
 	</queryString>
 	<field name="id_tr_beli" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -102,11 +106,6 @@
 				<text><![CDATA[Nama Karyawan]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="365" y="20" width="85" height="20" uuid="abc25bab-d754-474b-ace9-1bfb503f649b"/>
-				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Total Pengeluaran :]]></text>
-			</staticText>
-			<staticText>
 				<reportElement x="445" y="40" width="110" height="20" uuid="3adc8e84-4612-41ac-b0bf-666dd913720c"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Tanggal]]></text>
@@ -116,17 +115,20 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<text><![CDATA[Jumlah Pengeluaran]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="450" y="20" width="105" height="20" uuid="ca1cbf25-8fd0-4d83-8392-b55c31fadd8f"/>
-				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{totalPengeluaran}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="0" y="20" width="44" height="20" uuid="f017a640-b004-4c1e-9d65-9f86a3444564"/>
+				<reportElement x="2" y="20" width="42" height="20" uuid="93d43b51-ea8d-462a-a9a1-bf1351f0dba9"/>
 				<text><![CDATA[Tanggal :]]></text>
 			</staticText>
+			<staticText>
+				<reportElement x="360" y="20" width="88" height="20" uuid="cc36957e-2c07-4eff-b6c8-83c0ea8c9b41"/>
+				<text><![CDATA[Total Pengeluaran :]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="44" y="20" width="190" height="20" uuid="a9fe9945-1043-4d24-8cd8-a177d98d37e0"/>
+				<reportElement x="448" y="20" width="107" height="20" uuid="251e11e6-670c-412a-9859-f7f7031b2489"/>
+				<textFieldExpression><![CDATA[$P{totalPengeluaran}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="20" width="155" height="20" uuid="a43c00fd-ad2e-4b38-b0f7-df8f0c711f65"/>
 				<textFieldExpression><![CDATA[$P{rentangTanggal}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -156,15 +158,40 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="30" y="0" width="65" height="20" uuid="6e586ecb-ad05-4330-b1b7-2ad3758f37f3"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{id_tr_beli}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="97" y="0" width="60" height="20" uuid="57a201e3-0200-4d71-b04e-63f2b8296411"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{id_karyawan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="160" y="0" width="110" height="20" uuid="82cdff28-692c-41f1-a77d-5f0633443e9e"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{nama_karyawan}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="272" y="0" width="169" height="20" uuid="ffbcc238-403d-4dc2-8a41-83a91660f55e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="445" y="0" width="105" height="20" uuid="eca5d3bf-b390-43ad-9f54-200decde20f8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{tanggal}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch"/>
+		<band height="8" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="54" splitType="Stretch"/>
+		<band height="11" splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="42" splitType="Stretch"/>
+		<band height="10" splitType="Stretch"/>
 	</summary>
 </jasperReport>

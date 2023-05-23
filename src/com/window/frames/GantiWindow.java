@@ -10,14 +10,10 @@ import com.media.Gambar;
 import com.users.UserLevels;
 import com.users.Users;
 import com.window.frames.SplashWindow;
-
-import java.awt.Color;
-import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -73,7 +69,9 @@ public class GantiWindow extends javax.swing.JFrame {
                         boolean login = user.login(this.username, passwordBaru);
                         if (login) {
                             Audio.play(Audio.SOUND_INFO);
-                            JOptionPane.showMessageDialog(this, "Login Berhasil!\n\nSelamat datang " + user.getData(UserLevels.USERS.name(), "nama_karyawan", "WHERE id_karyawan = '" + user.getData(UserLevels.USERS.name(), "id_karyawan", "WHERE username = '" + this.username + "'") + "'"));
+                            JOptionPane.showMessageDialog(this, "Login Berhasil!\n\nSelamat datang " + user.getData(UserLevels.USERS.name(),
+                                    "nama_karyawan", "WHERE id_karyawan = '" + user.getData(UserLevels.USERS.name(), "id_karyawan", 
+                                            "WHERE username = '" + this.username + "'") + "'"));
                             // membuka window dashboard
                             java.awt.EventQueue.invokeLater(new Runnable() {
                                 @Override
@@ -382,11 +380,9 @@ public class GantiWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_lblEye1MouseExited
 
     private void btnKembaliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKembaliMouseClicked
-        // TODO add your handling code here:
         user.closeConnection();
         this.dispose();
         java.awt.EventQueue.invokeLater(new Runnable(){
-
             @Override
             public void run(){
                 new com.window.frames.LoginWindow().setVisible(true);

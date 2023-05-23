@@ -27,7 +27,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author Gemastik Lightning
+ * @author Amirzan Fikri 
  */
 public class DataSupplier extends javax.swing.JPanel {
 
@@ -289,6 +289,7 @@ public class DataSupplier extends javax.swing.JPanel {
         });
         add(btnDel, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 636, 154, 50));
 
+        inpCari.setBackground(new java.awt.Color(255, 255, 255));
         inpCari.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         inpCari.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -298,7 +299,7 @@ public class DataSupplier extends javax.swing.JPanel {
                 inpCariKeyTyped(evt);
             }
         });
-        add(inpCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 80, 180, 23));
+        add(inpCari, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 78, 180, 23));
 
         valIDSupplier.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         valIDSupplier.setForeground(new java.awt.Color(0, 0, 0));

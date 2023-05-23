@@ -108,7 +108,6 @@ public class InputKaryawan extends javax.swing.JDialog {
     private void addData(){
         boolean error = false;
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        // mendapatkan data dari textfield
         this.username = this.inpUsername.getText();
         this.nama = this.inpNama.getText();
         this.noTelp = this.inpNoTelp.getText();
@@ -121,7 +120,6 @@ public class InputKaryawan extends javax.swing.JDialog {
             case 1 : level = UserLevels.ADMIN; break;
             case 2 : level = UserLevels.KARYAWAN; break;
         }
-        // cek apakah user sudah memilih level atau belum
         if (this.username.equals("")) {
             error = true;
             this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -157,7 +155,7 @@ public class InputKaryawan extends javax.swing.JDialog {
             Message.showWarning(null, "Silahkan pilih level User terlebih dahulu!");
         }
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));         
-}
+    }
     
     /**
      * Digunakan untuk mengedit data dari user
@@ -200,7 +198,8 @@ public class InputKaryawan extends javax.swing.JDialog {
         // cek apakah user sudah memilih level atau belum
         if (this.newLevel != null) {
             // validasi data
-            if (this.user.validateDataKaryawan(this.idKaryawan, this.newNama, this.newNoTelp, this.newAlamat, this.newPass, this.newLevel, this.newUsername)) {
+            if (this.user.validateDataKaryawan(this.idKaryawan, this.newNama, this.newNoTelp, this.newAlamat, this.newPass, 
+                    this.newLevel, this.newUsername)) {
                 // mengedit data
                 eNama = this.user.setNamaKaryawan(this.idKaryawan, this.newNama);
                 eNoTelp = this.user.setNoTelpKaryawan(this.idKaryawan, this.newNoTelp);
@@ -222,7 +221,7 @@ public class InputKaryawan extends javax.swing.JDialog {
                 }
             }
         } else {
-            Message.showWarning(null, "Silahkan pilih level Petugas terlebih dahulu!");
+            Message.showWarning(null, "Silahkan pilih level Karyawan terlebih dahulu!");
         }
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }

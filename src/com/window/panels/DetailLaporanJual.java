@@ -48,7 +48,7 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         initComponents();
         if(transaksi == true){
             this.Tr = true;
-            this.valJudul.setText("Riwayat Penjualan");
+            this.valJudul.setText("Detail Riwayat Penjualan");
             ImageIcon icon1 = new ImageIcon("src\\resources\\image\\gambar\\app-riwayatPenjualanDetail.png");
             this.background.setIcon(icon1);
             this.valIDPemasukan.setVisible(false);
@@ -512,7 +512,9 @@ public class DetailLaporanJual extends javax.swing.JPanel {
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         Map parameters = new HashMap();
-        parameters.put("id_tr_jual", this.idTr);
+//        System.out.println("id detail "+this.idTr);
+        parameters.put("id_tr_jual",this.idTr);
+//        parameters.put("id_tr_jual","TRJ0003");
         this.cetakNota(parameters);
     }//GEN-LAST:event_btnPrintActionPerformed
 

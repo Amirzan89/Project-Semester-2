@@ -416,7 +416,6 @@ public class LoginWindow extends javax.swing.JFrame implements DocumentListener,
     }//GEN-LAST:event_btnGantiMouseExited
 
     private void btnGantiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGantiMouseClicked
-        // TODO add your handling code here:
         user.closeConnection();
         this.dispose();
         java.awt.EventQueue.invokeLater(new Runnable() {

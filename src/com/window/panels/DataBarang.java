@@ -334,6 +334,7 @@ public class DataBarang extends javax.swing.JPanel {
         });
         add(btnDel, new org.netbeans.lib.awtextra.AbsoluteConstraints(452, 630, 154, 50));
 
+        inpCari.setBackground(new java.awt.Color(255, 255, 255));
         inpCari.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         inpCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

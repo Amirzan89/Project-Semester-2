@@ -964,11 +964,6 @@ public class Users extends Database {
                 }
             }
             return isAdd;
-            // mengecek apakah karyawan sudah ditambahkan ke tabel user
-//            if (isAdd) {
-//                // menambahkan data user ke tabel user
-//                return this.addUser(username, pass, level, idKaryawan);
-//            }
         } catch (SQLException | InValidUserDataException ex) {
             this.deleteKaryawan(idKaryawan);
             System.out.println("Error Message : " + ex.getMessage());

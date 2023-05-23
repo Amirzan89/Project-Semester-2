@@ -1112,7 +1112,6 @@ public class TransaksiBeli extends javax.swing.JPanel {
 
     private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-        // membuka window konfirmasi pembayaran
         PreparedStatement pst;
         String idbarang;
         try {
@@ -1121,7 +1120,9 @@ public class TransaksiBeli extends javax.swing.JPanel {
                 int status;
                 Audio.play(Audio.SOUND_INFO);
                 this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin melakukan pembayaran ?", "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+                // membuka pop up konfirmasi pembayaran
+                status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin melakukan pembayaran ?",
+                        "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (status) {
                     case JOptionPane.YES_OPTION: {
                         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -1171,8 +1172,10 @@ public class TransaksiBeli extends javax.swing.JPanel {
                         //ubah saldo
                         this.updateSaldo();
                         this.txtSaldo.setText(text.toMoneyCase(Integer.toString(this.Saldo)));
-                        this.tabelDataBarang.setRowSelectionInterval(this.tabelDataBarang.getRowCount() - 1, this.tabelDataBarang.getRowCount() - 1);
-                        this.tabelDataSupplier.setRowSelectionInterval(this.tabelDataSupplier.getRowCount() - 1, this.tabelDataSupplier.getRowCount() - 1);
+                        this.tabelDataBarang.setRowSelectionInterval(this.tabelDataBarang.getRowCount() - 1, 
+                                this.tabelDataBarang.getRowCount() - 1);
+                        this.tabelDataSupplier.setRowSelectionInterval(this.tabelDataSupplier.getRowCount() - 1, 
+                                this.tabelDataSupplier.getRowCount() - 1);
                         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                         break;
                     }
@@ -1630,19 +1633,16 @@ public class TransaksiBeli extends javax.swing.JPanel {
                     if (tabelData.getValueAt(i, 2).equals(idSuppliertabel)) {
                         idSupplierdata = tabelData.getValueAt(i, 2).toString();
                         namasupplier = tabelData.getValueAt(i, 2).toString();
-//                        idSupplierdata = tabelData.getValueAt(i, 2).toString();
                         break;
                     }
                 }
                 if (idBarangtabel.equals(idBarangdata)) {
-                    System.out.println("idsupplier beda idbarang sama");
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     int status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin mengubah Supplier di Tabel transaksi di baris ke " + (tabelData.getSelectedRow() + 1) + " ?", "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
                     switch (status) {
                         case JOptionPane.YES_OPTION: {
                             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
                             jumlahbarang = Integer.parseInt(inpJumlah.getText());
-//                            tharga = text.toIntCase(inpTotalHarga.getText());
                             //hitung total harga dari jlabel total harga
                             tharga = this.hargaBeli * jumlahbarang;
                             stoktabel = Integer.parseInt(tabelDataBarang.getValueAt(tabelDataBarang.getSelectedRow(), 3).toString());
@@ -1697,7 +1697,6 @@ public class TransaksiBeli extends javax.swing.JPanel {
                             case JOptionPane.YES_OPTION: {
                                 this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
                                 jumlahbarang = Integer.parseInt(inpJumlah.getText());
-//                                tharga = text.toIntCase(inpTotalHarga.getText());
                                 //hitung total harga dari jlabel total harga
                                 tharga = this.hargaBeli * jumlahbarang;
                                 stoktabel = Integer.parseInt(tabelDataBarang.getValueAt(tabelDataBarang.getSelectedRow(), 3).toString());
@@ -1730,7 +1729,6 @@ public class TransaksiBeli extends javax.swing.JPanel {
                         }
                         //jika idbarang di tabelBarang yg dipilih tidak ada di tabelData maka tambahkan data barang ke tabelData
                     } else {
-                        System.out.println("data baru");
                         Message.showWarning(this, "Data Tidak Ada Di Tabel Transaksi !");
                         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                     }
@@ -1831,7 +1829,6 @@ public class TransaksiBeli extends javax.swing.JPanel {
             Logger.getLogger(LaporanJual.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnRiwayatMouseClicked
-
     private void dataDetail(JPanel pnl) {
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         // menghapus panel lama
@@ -1844,7 +1841,6 @@ public class TransaksiBeli extends javax.swing.JPanel {
         MainWindow.pnlMenu.validate();
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
-
     private void btnRiwayatMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRiwayatMouseEntered
         this.btnRiwayat.setIcon(Gambar.getNoAktiveIcon(this.btnRiwayat.getIcon().toString()));
     }//GEN-LAST:event_btnRiwayatMouseEntered

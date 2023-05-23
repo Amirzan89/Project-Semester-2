@@ -152,8 +152,6 @@ public class DataDiskon extends javax.swing.JPanel {
 
     private Object[][] getData() {
         try {
-            String tanggalAwal, tanggalAkhir;
-//            Object obj[][];
             int rows = 0;
             String sql = "SELECT id_diskon, nama_diskon, jumlah_diskon, minimal_harga, tanggal_awal, tanggal_akhir FROM diskon " + keyword;
             // mendefinisikan object berdasarkan total rows dan cols yang ada didalam tabel
@@ -167,8 +165,6 @@ public class DataDiskon extends javax.swing.JPanel {
                 this.obj[rows][1] = diskon.res.getString("nama_diskon");
                 this.obj[rows][2] = text.toMoneyCase(diskon.res.getString("jumlah_diskon"));
                 this.obj[rows][3] = text.toMoneyCase(diskon.res.getString("minimal_harga"));
-//                this.obj[rows][4] = diskon.res.getString("tanggal_awal");
-//                this.obj[rows][5] = diskon.res.getString("tanggal_akhir");
                 this.obj[rows][4] = date.format(date1.parse(diskon.res.getString("tanggal_awal")));
                 this.obj[rows][5] = date.format(date1.parse(diskon.res.getString("tanggal_akhir")));
                 rows++; // rows akan bertambah 1 setiap selesai membaca 1 row pada tabel
@@ -279,6 +275,7 @@ public class DataDiskon extends javax.swing.JPanel {
         valTanggalAkhir.setText(":");
         add(valTanggalAkhir, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 379, 240, 33));
 
+        inpCari.setBackground(new java.awt.Color(255, 255, 255));
         inpCari.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         inpCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -439,7 +436,7 @@ public class DataDiskon extends javax.swing.JPanel {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         try {
-            // membuka window input pembeli
+            // membuka window input diskon
             Audio.play(Audio.SOUND_INFO);
             InputDiskon tbh = new InputDiskon(null, true, null);
             tbh.setVisible(true);
@@ -468,7 +465,7 @@ public class DataDiskon extends javax.swing.JPanel {
         // mengecek apakah ada data yang dipilih atau tidak
         if (tabelData.getSelectedRow() > -1) {
             try {
-                // membuka window input pembeli
+                // membuka window input diskon
                 Audio.play(Audio.SOUND_INFO);
                 InputDiskon tbh = new InputDiskon(null, true, this.idSelected);
                 tbh.setVisible(true);
@@ -504,18 +501,16 @@ public class DataDiskon extends javax.swing.JPanel {
         if (tabelData.getSelectedRow() > -1) {
             // membuka confirm dialog untuk menghapus data
             Audio.play(Audio.SOUND_INFO);
-            status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus '" + this.namaDiskon + "' ?", "Confirm", JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
+            status = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus '" + this.namaDiskon + "' ?", "Confirm", 
+                    JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE);
             // mengecek pilihan dari diskon
             switch (status) {
                 // jika yes maka data akan dihapus
                 case JOptionPane.YES_OPTION:
-                    // menghapus data pembeli
                     this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
                     delete = this.diskon.deleteDiskon(this.idSelected);
-                    // mengecek apakah data pembeli berhasil terhapus atau tidak
                     if (delete) {
                         Message.showInformation(this, "Data berhasil dihapus!");
-                        // mengupdate tabel
                         this.updateTabel();
                         this.resetData();
                     } else {

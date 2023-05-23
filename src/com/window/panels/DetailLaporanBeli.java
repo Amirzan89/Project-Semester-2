@@ -49,7 +49,7 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
         initComponents();
         if(transaksi == true){
             this.Tr = true;
-            this.valJudul.setText("Riwayat Pembelian");
+            this.valJudul.setText("Detail Riwayat Pembelian");
             ImageIcon icon1 = new ImageIcon("src\\resources\\image\\gambar\\app-riwayatPembelianDetail.png");
             this.background.setIcon(icon1);
             this.valIDPengeluaran.setVisible(false);
@@ -101,13 +101,11 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
             Object[][] obj;
             int rows = 0;
             if (this.Tr == true) {
-                String sql = "SELECT id_tr_beli, id_supplier, nama_supplier, id_barang, nama_barang, jenis_barang, harga_beli, jumlah, total_harga FROM detail_transaksi_beli " + keyword + " ORDER BY jenis_barang";
+                String sql = "SELECT id_tr_beli, id_supplier, nama_supplier, id_barang, nama_barang, "
+                        + "jenis_barang, harga_beli, jumlah, total_harga FROM detail_transaksi_beli " + keyword + " ORDER BY jenis_barang";
                 obj = new Object[trb.getJumlahData("detail_transaksi_beli", keyword)][9];
-                // mengeksekusi query
                 trb.res = trb.stat.executeQuery(sql);
-                // mendapatkan semua data yang ada didalam this.tabelData
                 while (trb.res.next()) {
-                    // menyimpan data dari this.tabelData ke object
                     obj[rows][0] = trb.res.getString("id_tr_beli");
                     if (trb.res.getString("id_supplier") == null) {
                         obj[rows][1] = "";
@@ -129,14 +127,11 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
                 }
                 return obj;
             } else {
-                String sql = "SELECT id_tr_beli, id_supplier, nama_supplier, id_barang, nama_barang, jenis_barang, harga_beli, jumlah, total_harga FROM detail_transaksi_beli " + keyword + " ORDER BY jenis_barang";
-//            System.out.println(sql);
+                String sql = "SELECT id_tr_beli, id_supplier, nama_supplier, id_barang, nama_barang, jenis_barang, harga_beli,"
+                        + " jumlah, total_harga FROM detail_transaksi_beli " + keyword + " ORDER BY jenis_barang";
                 obj = new Object[trb.getJumlahData("detail_transaksi_beli", keyword)][10];
-                // mengeksekusi query
                 trb.res = trb.stat.executeQuery(sql);
-                // mendapatkan semua data yang ada didalam this.tabelData
                 while (trb.res.next()) {
-                    // menyimpan data dari this.tabelData ke object
                     obj[rows][0] = trb.res.getString("id_tr_beli").replace("TRB", "LPG");
                     obj[rows][1] = trb.res.getString("id_tr_beli");
                     if (trb.res.getString("id_supplier") == null) {
@@ -171,7 +166,8 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
             this.tabelData.setModel(new javax.swing.table.DefaultTableModel(
                     getData(),
                     new String[]{
-                        "ID Transaksi Beli", "ID Supplier", "Nama Supplier", "ID Barang", "Nama Barang", "Jenis Brang", "Harga Beli", "Jumlah", "Total Harga"
+                        "ID Transaksi Beli", "ID Supplier", "Nama Supplier", "ID Barang", 
+                        "Nama Barang", "Jenis Brang", "Harga Beli", "Jumlah", "Total Harga"
                     }
             ) {
                 boolean[] canEdit = new boolean[]{
@@ -187,7 +183,8 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
             this.tabelData.setModel(new javax.swing.table.DefaultTableModel(
                     getData(),
                     new String[]{
-                        "ID Pengeluaran", "ID Transaksi Beli", "ID Supplier", "Nama Supplier", "ID Barang", "Nama Barang", "Jenis Brang", "Harga Beli", "Jumlah", "Total Harga"
+                        "ID Pengeluaran", "ID Transaksi Beli", "ID Supplier", "Nama Supplier", 
+                        "ID Barang", "Nama Barang", "Jenis Brang", "Harga Beli", "Jumlah", "Total Harga"
                     }
             ) {
                 boolean[] canEdit = new boolean[]{
@@ -242,7 +239,7 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
 
     private void cetakNota(Map parameter) {
         try {
-            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\notaPembelian.jrxml");
+            JasperDesign jasperDesign = JRXmlLoader.load("src\\Report\\strukPembelian.jrxml");
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             JasperPrint jPrint = JasperFillManager.fillReport(jasperReport, parameter, trb.conn);
             JasperViewer.viewReport(jPrint, false);
@@ -491,7 +488,6 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
         try {
             String key = this.inpCari.getText();
             this.keyword = "WHERE id_tr_beli = '" + this.idTrSelected + "' AND (id_barang LIKE '%" + key + "%' OR nama_barang LIKE '%" + key + "%')";
-
             this.updateTabel();
         } catch (ParseException ex) {
             Logger.getLogger(DetailLaporanBeli.class.getName()).log(Level.SEVERE, null, ex);
@@ -549,7 +545,9 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         Map parameters = new HashMap();
+//        System.out.println("id detail beli "+this.idTr);
         parameters.put("id_tr_beli", this.idTr);
+//        parameters.put("id_tr_beli", "TRB0001");
         this.cetakNota(parameters);
     }//GEN-LAST:event_btnPrintActionPerformed
 

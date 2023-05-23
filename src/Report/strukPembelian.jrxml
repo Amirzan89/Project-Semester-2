@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="notaPenjualan" language="groovy" pageWidth="136" pageHeight="842" columnWidth="136" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="96f949c0-0dfc-40b8-9ebe-69fa1f128f17">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="strukPembelian" language="groovy" pageWidth="136" pageHeight="842" columnWidth="136" leftMargin="0" rightMargin="0" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="96f949c0-0dfc-40b8-9ebe-69fa1f128f17">
 	<property name="ireport.zoom" value="3.1384283767210084"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="41"/>
+	<property name="ireport.y" value="281"/>
 	<parameter name="id_tr_beli" class="java.lang.String"/>
 	<parameter name="totalBarang" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="totalHarga" class="java.lang.String" isForPrompting="false"/>
@@ -12,11 +12,11 @@
 	<parameter name="tanggal" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="totalSebelum" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
-		<![CDATA[SELECT transaksi_beli.id_tr_beli, transaksi_beli.nama_karyawan, detail_transaksi_beli.nama_barang, detail_transaksi_beli.harga_beli, detail_transaksi_beli.jumlah,
+		<![CDATA[SELECT transaksi_beli.id_tr_beli, transaksi_beli.nama_karyawan, detail_transaksi_beli.nama_barang, detail_transaksi_beli.harga_beli AS harga, detail_transaksi_beli.jumlah,
 detail_transaksi_beli.total_harga AS subtotal FROM transaksi_beli INNER JOIN detail_transaksi_beli
 ON transaksi_beli.id_tr_beli = detail_transaksi_beli.id_tr_beli WHERE transaksi_beli.id_tr_beli = $P{id_tr_beli};]]>
 	</queryString>
-	<field name="id_tr_jual" class="java.lang.String">
+	<field name="id_tr_beli" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="nama_karyawan" class="java.lang.String">
@@ -25,9 +25,7 @@ ON transaksi_beli.id_tr_beli = detail_transaksi_beli.id_tr_beli WHERE transaksi_
 	<field name="nama_barang" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="harga" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
+	<field name="harga" class="java.lang.Integer"/>
 	<field name="jumlah" class="java.lang.Integer">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>

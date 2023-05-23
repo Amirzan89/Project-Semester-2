@@ -151,9 +151,12 @@ public class Dashboard extends javax.swing.JPanel {
     private void showMain() {
         String tanggal = waktu.getCurrentDate();
         String tSaldo = text.toMoneyCase(Integer.toString(this.Saldo));
-        String tPemasukan = text.toMoneyCase(Integer.toString(getTotal("transaksi_jual", "keuntungan", "WHERE YEAR(tanggal) = '" + tahun + "' AND MONTH(tanggal) = '" + bulan + "'")));
-        String tPengeluaran = text.toMoneyCase(Integer.toString(getTotal("transaksi_beli", "total_hrg", "WHERE YEAR(tanggal) = '" + tahun + "' AND MONTH(tanggal) = '" + bulan + "'")));
-        String tPembeli = Integer.toString(getJumlahData("transaksi_jual", "WHERE YEAR(tanggal) = '" + tahun + "' AND MONTH(tanggal) = '" + bulan + "'"));
+        String tPemasukan = text.toMoneyCase(Integer.toString(getTotal("transaksi_jual", "keuntungan", "WHERE YEAR(tanggal) = '" + 
+                tahun + "' AND MONTH(tanggal) = '" + bulan + "'")));
+        String tPengeluaran = text.toMoneyCase(Integer.toString(getTotal("transaksi_beli", "total_hrg", "WHERE YEAR(tanggal) = '" + 
+                tahun + "' AND MONTH(tanggal) = '" + bulan + "'")));
+        String tPembeli = Integer.toString(getJumlahData("transaksi_jual", "WHERE YEAR(tanggal) = '" + 
+                tahun + "' AND MONTH(tanggal) = '" + bulan + "'"));
         lblSaldo.setText(tSaldo);
         lblPemasukan.setText(tPemasukan);
         lblPengeluaran.setText(tPengeluaran);
@@ -165,9 +168,9 @@ public class Dashboard extends javax.swing.JPanel {
             DefaultTableModel tabelModel = (DefaultTableModel) tabelData.getModel();
             Date tanggalData;
             int hari1 = 0, bulan1 = -1, tahun1 = 0;
-            String kolom[] = {"No", "Id transaksi ", "Total Harga", "Jenis Transaksi", "Tanggal", "Waktu"}, waktu, tanggalPenuh,tanggalPenuh1, total, jenis, data[] = new String[6];
-            TableModel model;
-            String sql = "SELECT id_tr_beli AS id,total_hrg AS total, tanggal FROM transaksi_beli UNION SELECT id_tr_jual,total_hrg,tanggal FROM transaksi_jual ORDER BY tanggal DESC";
+            String tanggalPenuh,tanggalPenuh1, total, jenis, data[] = new String[6];
+            String sql = "SELECT id_tr_beli AS id,total_hrg AS total, tanggal FROM transaksi_beli UNION SELECT id_tr_jual,"
+                    + "total_hrg,tanggal FROM transaksi_jual ORDER BY tanggal DESC";
             db.res = db.stat.executeQuery(sql);
             int nomor = 1;
             while (db.res.next()) {

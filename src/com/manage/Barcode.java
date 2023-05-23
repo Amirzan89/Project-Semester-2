@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
  * @author Amirzan Fikri P
  */
 public class Barcode {
-    private final Gambar gambar = new Gambar();
     private final FileManager fManage = new FileManager();
     private final String BARCODE = "\\src\\barcode\\";
     private final String dir = System.getProperty("user.dir");
@@ -62,7 +61,21 @@ public class Barcode {
             return false;
         }
     }
-
+    public boolean deleteBarcode(String kode) {
+        try {
+            File path = new File(this.dir + this.BARCODE);
+            File gambar = fManage.getImage(path, kode);
+            if (fManage.deleteFile(gambar.toString())) {
+                return true;
+            } else {
+                throw new Exception("Barcode tidak bisa dihapus");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Barcode.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
     public String scanBarcode(String kode) throws Exception {
         try {
             File path = new File(this.dir + this.BARCODE);
@@ -84,20 +97,5 @@ public class Barcode {
             System.out.println("error barcode");
         }
         return "";
-    }
-
-    public boolean deleteBarcode(String kode) {
-        try {
-            File path = new File(this.dir + this.BARCODE);
-            File gambar = fManage.getImage(path, kode);
-            if (fManage.deleteFile(gambar.toString())) {
-                return true;
-            } else {
-                throw new Exception("Barcode tidak bisa dihapus");
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(Barcode.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
     }
 }
