@@ -1302,6 +1302,7 @@ public class LaporanJual extends javax.swing.JPanel {
             case 1:
                 if (tabelDataS.getRowCount() > 0) {
                     parameters.put("rentangTanggal"," semua tanggal");
+                    tPemasukan = text.toMoneyCase(Integer.toString(getTotal("transaksi_jual", "total_hrg", "")));
                     parameters.put("totalPemasukan",this.tPemasukan);
                     parameters.put("query","");
                     this.cetakLaporan(parameters);
