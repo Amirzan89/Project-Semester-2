@@ -456,7 +456,7 @@ public class MainWindow extends javax.swing.JFrame {
         try {
             if (this.user.isAdmin()) {
                 this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                this.setTitle("Laporan Jual");
+                this.setTitle("Laporan Pemasukan");
                 this.setActivatedButton(this.btnLpJual);
                 // menghapus panel lama
                 pnlMenu.removeAll();
@@ -488,7 +488,7 @@ public class MainWindow extends javax.swing.JFrame {
             if (this.user.isAdmin()) {
 
                 this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                this.setTitle("Laporan Beli");
+                this.setTitle("Laporan Pengeluaran");
                 this.setActivatedButton(this.btnLpBeli);
 
                 // menghapus panel lama

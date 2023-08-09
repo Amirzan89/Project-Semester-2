@@ -22,7 +22,7 @@ public class InputSaldo extends javax.swing.JDialog {
     private final Users user = new Users();
     private final Text text = new Text();
     public int option;
-
+    private boolean eye = false;
     public static final int ADD_OPTION = 1, EDIT_OPTION = 2;
 
     private String saldo, newSaldo, pass, hashing;
@@ -271,19 +271,22 @@ public class InputSaldo extends javax.swing.JDialog {
     }//GEN-LAST:event_inpPasswordActionPerformed
 
     private void lblEyeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseClicked
-
+        if(this.eye){
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
+            this.inpPassword.setEchoChar((char) 0);
+        }else{
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
+            this.inpPassword.setEchoChar('•');
+        }
+        this.eye = !this.eye;
     }//GEN-LAST:event_lblEyeMouseClicked
 
     private void lblEyeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
-        this.inpPassword.setEchoChar((char) 0);
     }//GEN-LAST:event_lblEyeMouseEntered
 
     private void lblEyeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
-        this.inpPassword.setEchoChar('•');
     }//GEN-LAST:event_lblEyeMouseExited
 
     public static void main(String args[]) {

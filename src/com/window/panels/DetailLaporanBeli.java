@@ -67,6 +67,7 @@ public class DetailLaporanBeli extends javax.swing.JPanel {
         this.tabelData.getTableHeader().setBackground(new java.awt.Color(255, 255, 255));
         this.tabelData.getTableHeader().setForeground(new java.awt.Color(0, 0, 0));
         this.idTrSelected = idtr;
+        this.idTr = idtr;
         keyword = "WHERE id_tr_beli = '" + this.idTrSelected + "'";
         this.updateTabel();
         valTotal.setText(text.toMoneyCase(Integer.toString(getTotal("detail_transaksi_beli", "total_harga", "WHERE id_tr_beli = '" + this.idTrSelected + "'"))));

@@ -379,13 +379,13 @@ public class Text {
         // mengecek apakah input adalah sebuah number atau tidak
         if(this.isNumber(money)){
             // mengubah menjadi money case
-            return String.format("Rp. %,d.00", Long.parseLong(money));
+            return String.format("Rp. %,d", Long.parseLong(money));
         }
         // jika input bukan sebuah number maka akan mengembalikan nilai 'Rp. -1.00'
         return "Rp. -1.00";
     }
     public int toIntCase(String moneyCase){
-        String data = moneyCase.substring(4,moneyCase.length()-3).replace(",", "");
+        String data = moneyCase.substring(4,moneyCase.length()).replace(".", "");
         int value = Integer.parseInt(data);
         return value;
     }

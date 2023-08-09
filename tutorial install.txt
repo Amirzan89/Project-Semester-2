@@ -1,0 +1,10 @@
+Petunjuk menggunakan Nano App
+1. install nano app exe 
+2. masukkan data ke database
+3. Login dengan akun admin 
+Username : Admin
+password : Admin@123456789
+
+akun karyawan
+Username : Amirzan12
+Password : Admin@123456789

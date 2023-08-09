@@ -24,7 +24,7 @@ public class InputKaryawan extends javax.swing.JDialog {
     public static final int ADD_OPTION = 1, EDIT_OPTION = 2;
     
     private final String idKaryawan;
-    
+    private boolean eye = false;
     private String nama, noTelp, alamat, pass, newNama, newNoTelp, newAlamat, newPass, username, newUsername, rfid, newRfid, Level = "", newlevel;
     
     private UserLevels level, newLevel;
@@ -445,19 +445,22 @@ public class InputKaryawan extends javax.swing.JDialog {
     }//GEN-LAST:event_inpIdMouseClicked
 
     private void lblEyeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseClicked
-
+        if(this.eye){
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
+            this.inpPassword.setEchoChar((char)0);
+        }else{
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
+            this.inpPassword.setEchoChar('•');
+        }
+        this.eye = !this.eye;
     }//GEN-LAST:event_lblEyeMouseClicked
 
     private void lblEyeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
-        this.inpPassword.setEchoChar((char)0);
     }//GEN-LAST:event_lblEyeMouseEntered
 
     private void lblEyeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
-        this.inpPassword.setEchoChar('•');
     }//GEN-LAST:event_lblEyeMouseExited
 
     private void inpUsernameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inpUsernameMouseClicked

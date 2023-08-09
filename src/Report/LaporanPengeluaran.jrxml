@@ -20,7 +20,7 @@
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT id_tr_beli, id_karyawan, nama_karyawan, CONCAT("Rp ",FORMAT(COALESCE(total_hrg,'0'),0)) AS total,
- DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal FROM transaksi_beli;]]>
+ DATE_FORMAT(tanggal, '%d-%m-%Y') AS tanggal FROM transaksi_beli $P!{query};]]>
 	</queryString>
 	<field name="id_tr_beli" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>

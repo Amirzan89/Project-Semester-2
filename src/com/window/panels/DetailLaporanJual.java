@@ -66,6 +66,7 @@ public class DetailLaporanJual extends javax.swing.JPanel {
         this.tabelData.getTableHeader().setBackground(new java.awt.Color(255, 255, 255));
         this.tabelData.getTableHeader().setForeground(new java.awt.Color(0, 0, 0));
         this.idTrSelected = idtr;
+        this.idTr = idtr;
         System.out.println("id detail "+this.idTrSelected);
         keyword = "WHERE id_tr_jual = '" + this.idTrSelected + "'";
         this.updateTabel();

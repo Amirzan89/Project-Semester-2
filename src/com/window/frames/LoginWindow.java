@@ -34,6 +34,7 @@ import java.awt.event.*;
 public class LoginWindow extends javax.swing.JFrame implements DocumentListener, ActionListener{
     private final Users user = new Users();
     private String username = "", password;
+    private boolean eye = false;
     private Timer timer;
     public LoginWindow() {
         initComponents();
@@ -427,19 +428,21 @@ public class LoginWindow extends javax.swing.JFrame implements DocumentListener,
     }//GEN-LAST:event_btnGantiMouseClicked
 
     private void lblEyeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseClicked
-
+        if(this.eye){
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
+            this.inpPassword.setEchoChar((char) 0);
+        }else{
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
+            this.inpPassword.setEchoChar('•');
+        }
     }//GEN-LAST:event_lblEyeMouseClicked
 
     private void lblEyeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
-        this.inpPassword.setEchoChar((char) 0);
     }//GEN-LAST:event_lblEyeMouseEntered
 
     private void lblEyeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
-        this.inpPassword.setEchoChar('•');
     }//GEN-LAST:event_lblEyeMouseExited
 
     private void inpRFIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inpRFIDActionPerformed

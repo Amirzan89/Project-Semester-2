@@ -29,7 +29,7 @@ public class GantiWindow extends javax.swing.JFrame {
     private final Users user = new Users();
     private String username, passwordLama, passwordBaru;
     private int x, y;
-
+    private boolean eye = false, eye1 = false;
     public GantiWindow() {
         initComponents();
 
@@ -348,35 +348,41 @@ public class GantiWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_inpPasswordBaruActionPerformed
 
     private void lblEyeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseClicked
-
+        if(this.eye){
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
+            this.inpPasswordLama.setEchoChar((char)0);
+        }else{
+            this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
+            this.inpPasswordLama.setEchoChar('•');
+        }
+        this.eye = !this.eye;
     }//GEN-LAST:event_lblEyeMouseClicked
 
     private void lblEyeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
-        this.inpPasswordLama.setEchoChar((char)0);
     }//GEN-LAST:event_lblEyeMouseEntered
 
     private void lblEyeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEyeMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        this.lblEye.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
-        this.inpPasswordLama.setEchoChar('•');
     }//GEN-LAST:event_lblEyeMouseExited
 
     private void lblEye1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEye1MouseClicked
-        // TODO add your handling code here:
+        if(this.eye1){
+            this.lblEye1.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
+            this.inpPasswordBaru.setEchoChar((char)0);
+        }else{
+            this.lblEye1.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
+            this.inpPasswordBaru.setEchoChar('•');
+        }
+        this.eye1 = !this.eye1;
     }//GEN-LAST:event_lblEye1MouseClicked
 
     private void lblEye1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEye1MouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        this.lblEye1.setIcon(Gambar.getIcon("ic-login-eye-open.png"));
-        this.inpPasswordBaru.setEchoChar((char)0);
     }//GEN-LAST:event_lblEye1MouseEntered
 
     private void lblEye1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEye1MouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        this.lblEye1.setIcon(Gambar.getIcon("ic-login-eye-close.png"));
-        this.inpPasswordBaru.setEchoChar('•');
     }//GEN-LAST:event_lblEye1MouseExited
 
     private void btnKembaliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKembaliMouseClicked

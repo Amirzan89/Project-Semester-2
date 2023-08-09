@@ -23,8 +23,12 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -368,7 +372,7 @@ public class LaporanBeli extends javax.swing.JPanel {
                 hari_1 = Integer.parseInt(tanggalPenuh1.substring(0, 2));
                 bulan_1 = Integer.parseInt(tanggalPenuh1.substring(3, 5));
                 tahun_1 = Integer.parseInt(tanggalPenuh1.substring(6));
-                obj[rows][4] = hari1 + "-" + this.waktu.getNamaBulan(bulan_1 - 1) + "-" + tahun_1;
+                obj[rows][4] = hari_1 + "-" + this.waktu.getNamaBulan(bulan_1 - 1) + "-" + tahun_1;
                 obj[rows][5] = tanggalPenuh.substring(11, 19);
                 rows++;
             }
@@ -1303,17 +1307,30 @@ public class LaporanBeli extends javax.swing.JPanel {
         Map parameters = new HashMap();
         switch (this.selectedIndex) {
             case 1:
-                parameters.put("rentangTanggal"," semua tanggal");
-                parameters.put("totalPengeluaran",this.tPengeluaran);
-                parameters.put("query","");
-                this.cetakLaporan(parameters);
-                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                if (tabelDataS.getRowCount() > 0) {
+                    parameters.put("rentangTanggal"," semua tanggal");
+                    parameters.put("totalPengeluaran",this.tPengeluaran);
+                    parameters.put("query","");
+                    this.cetakLaporan(parameters);
+                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                } else {
+                    this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    Message.showWarning(this, "Tabel kosong !");
+                }
                 break;
             case 2:
                 if (tabelDataH.getRowCount() > 0) {
-                    parameters.put("rentangTanggal",tbHarian.getDate());
+                    LocalDate localDate = tbHarian.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    String dayName = localDate.getDayOfWeek().getDisplayName(
+                        TextStyle.FULL, new Locale("id", "ID")
+                    );
+                    parameters.put("rentangTanggal",dayName+" "+date.format(tbHarian.getDate()));
                     parameters.put("totalPengeluaran",this.valTotalH.getText());
-                    parameters.put("query"," WHERE DATE(tanggal) = "+tbHarian.getDate());
+                    int hari2 = Integer.parseInt(date1.format(tbHarian.getDate()).substring(8));
+                    int bulan2 = Integer.parseInt(date1.format(tbHarian.getDate()).substring(5, 7));
+                    int tahun2 = Integer.parseInt(date1.format(tbHarian.getDate()).substring(0, 4));
+                    String query = "WHERE tanggal >= '" + date1.format(tbHarian.getDate()) + "' AND tanggal <= '" + String.format("%s-%s-%s", tahun2, bulan2, hari2 + 1) + "'";
+                    parameters.put("query",query);
                     this.cetakLaporan(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {
@@ -1323,9 +1340,9 @@ public class LaporanBeli extends javax.swing.JPanel {
                 break;
             case 3:
                 if (tabelDataB.getRowCount() > 0) {
-                    parameters.put("rentangTanggal"," bulan "+tbBulanan.getMonth() + " tahun "+tbTahunan.getYear());
+                    parameters.put("rentangTanggal","bulan "+(tbBulanan.getMonth()+1) + " tahun "+tbTahunan.getYear());
                     parameters.put("totalPengeluaran",this.valTotalB.getText());
-                    parameters.put("query"," WHERE MONTH(tanggal) = "+tbBulanan.getMonth()+" AND YEAR(tanggal) = "+tbTahunan.getYear());
+                    parameters.put("query"," WHERE MONTH(tanggal) = "+(tbBulanan.getMonth()+1)+" AND YEAR(tanggal) = "+tbTahunan.getYear());
                     this.cetakLaporan(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {
@@ -1335,9 +1352,11 @@ public class LaporanBeli extends javax.swing.JPanel {
                 break;
             case 4:
                 if (tabelDataM.getRowCount() > 0) {
-                    parameters.put("rentangTanggal",tbMinggu1.getDate()+"s.d."+tbMinggu2.getDate());
+                    parameters.put("rentangTanggal",date.format(tbMinggu1.getDate())+" s.d."+date.format(tbMinggu2.getDate()));
                     parameters.put("totalPengeluaran",this.valTotalM.getText());
-                    parameters.put("query"," WHERE DATE(tanggal) >= "+tbMinggu1.getDate()+" AND DATE(tanggal) <= "+tbMinggu2.getDate());
+                    String query = " WHERE tanggal BETWEEN '"+date1.format(tbMinggu1.getDate())+"' AND '"+date1.format(tbMinggu2.getDate())+" 23:59:59';";
+//                    System.out.println("query "+query);
+                    parameters.put("query",query);
                     this.cetakLaporan(parameters);
                     this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 } else {
